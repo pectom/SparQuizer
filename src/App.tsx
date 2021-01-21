@@ -1,11 +1,9 @@
 import React from 'react';
 import {createStyles, makeStyles, Theme} from '@material-ui/core/styles';
-import Paper from '@material-ui/core/Paper';
 import Grid from '@material-ui/core/Grid';
-import QuestionCard from "./components/QuestionCard";
-import HintCard from "./components/HintCard";
-import {Typography} from "@material-ui/core";
-import {EmojiEvents, Timer} from "@material-ui/icons";
+import QuestionCard from "./components/question-card/QuestionCard";
+import HintCard from "./components/hint-card/HintCard";
+import Header from "./components/Header";
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
@@ -29,29 +27,7 @@ export default function App() {
 
     return (
         <Grid container alignItems="center" justify="center" className={classes.root}>
-            <Grid container justify={"space-between"} spacing={3}>
-                <Grid item xs={2}>
-                    <Paper className={classes.paper}>
-                        <Timer/>
-                        <Typography>
-                            80s
-                        </Typography>
-                    </Paper>
-                </Grid>
-                <Grid item xs={6}>
-                    <Paper className={classes.paper}>
-                        SparQuizer
-                    </Paper>
-                </Grid>
-                <Grid item xs={2}>
-                    <Paper className={classes.paper}>
-                        <EmojiEvents/>
-                        <Typography>
-                            220 points
-                        </Typography>
-                    </Paper>
-                </Grid>
-            </Grid>
+            <Header/>
             <Grid container spacing={3}>
                 <Grid item xs={8}>
                     <QuestionCard/>

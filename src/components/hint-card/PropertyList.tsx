@@ -1,6 +1,7 @@
 import React from 'react';
 import {createStyles, makeStyles, Theme} from '@material-ui/core/styles';
-import {Button, Divider, List, ListItem, ListItemProps} from "@material-ui/core";
+import {Divider, List, ListItem, ListItemProps} from "@material-ui/core";
+import {SparQLTypography} from "../common/SparQLTypography";
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
@@ -29,19 +30,20 @@ interface ListItemLinkProps extends ListItemProps {
 function ListItemLink(props: ListItemLinkProps) {
     const classes = useStyles();
     const {sparqlProperty} = props
+    const {property} = sparqlProperty
     return (
         <>
             <ListItem>
-                <Button href={sparqlProperty.property.link} target="_blank" color="inherit" className={classes.button}>
-                    {sparqlProperty.property.name} {sparqlProperty.property.code}
-                </Button>
+                <SparQLTypography code={property.code} link={property.link} >
+                    {property.name}
+                </SparQLTypography>
                 <List className={classes.button}>
                     {
                         sparqlProperty.values.map(property => {
                             return (
-                                <Button href={property.link} target="_blank" color="inherit" className={classes.button}>
-                                    {property.name} {property.code}
-                                </Button>
+                                <SparQLTypography code={property.code} link={property.link} >
+                                    {property.name}
+                                </SparQLTypography>
                             )
                         })
                     }
@@ -121,7 +123,6 @@ export default function PropertyList() {
     ]
 
     return (
-
         <List>
             {
                 data.map(property => {
