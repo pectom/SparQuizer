@@ -12,6 +12,16 @@ import {Card} from "../common/Card";
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
+        card: {
+            padding: theme.spacing(2)
+        },
+        content: {
+            width: "100%",
+            flexDirection: "column",
+            display: "flex",
+            alignContent: "center",
+            minHeight: "500px"
+        },
         diceIcon: {
             transform: 'rotate(0deg)',
             transition: theme.transitions.create('transform', {
@@ -24,9 +34,12 @@ const useStyles = makeStyles((theme: Theme) =>
         image: {
             width: 100
         },
+        name: {
+            alignSelf: "center",
+            marginBottom: theme.spacing(2)
+        }
     }),
 );
-
 
 export default function HintCard() {
     const classes = useStyles();
@@ -37,9 +50,9 @@ export default function HintCard() {
     };
 
     return (
-        <Card>
-            <CardContent>
-                <Typography variant="h4" color="textPrimary">
+        <Card className={classes.card}>
+            <CardContent className={classes.content}>
+                <Typography variant="h4" color="textPrimary" className={classes.name}>
                     Cristiano
                     Ronaldo
                 </Typography>
@@ -57,7 +70,11 @@ export default function HintCard() {
                         </Image>
                     </Grid>
                 </Grid>
+                {expanded &&
+                 <PropertyList/>
+                }
             </CardContent>
+            {!expanded &&
             <CardActions disableSpacing>
                 <Button
                     onClick={handleExpandClick}
@@ -67,10 +84,10 @@ export default function HintCard() {
                     <Casino className={clsx(classes.diceIcon, {
                         [classes.diceIconClicked]: expanded,
                     })}/>
-                    Draw new properties
+                    Draw new properties (-5 points)
                 </Button>
             </CardActions>
-            <PropertyList/>
+            }
         </Card>
     );
 }

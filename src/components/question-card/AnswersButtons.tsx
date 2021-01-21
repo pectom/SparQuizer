@@ -23,11 +23,23 @@ export default function AnswersButtons() {
                         Gwałt
                     </SparQLTypography>
                 </Button>
-                <Button className={classes.button}>Oszustwa podatkowe</Button>
+                <Button className={classes.button}>
+                    <SparQLTypography code="Q12312" link="https://www.wikidata.org/wiki/Q11571">
+                        Oszustwa podatkowe
+                    </SparQLTypography>
+                </Button>
             </Grid>
             <Grid container>
-                <Button className={classes.button}>Morderstwo</Button>
-                <Button className={classes.button}>Kradzież</Button>
+                <Button className={classes.button}>
+                    <SparQLTypography code="Q12312" link="https://www.wikidata.org/wiki/Q11571">
+                        Kradzież
+                    </SparQLTypography>
+                </Button>
+                <Button className={classes.button}>
+                    <SparQLTypography code="Q12312" link="https://www.wikidata.org/wiki/Q11571">
+                        Morderstwo
+                    </SparQLTypography>
+                </Button>
             </Grid>
         </Grid>
     );

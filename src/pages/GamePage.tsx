@@ -27,7 +27,7 @@ export default function GamePage() {
     const classes = useStyles();
 
     return (
-        <Grid container alignItems="center" justify="center" className={classes.root}>
+        <Grid container alignItems="center" justify="center" spacing={1} className={classes.root}>
             <Header/>
             <Grid container spacing={3}>
                 <Grid item xs={8}>
