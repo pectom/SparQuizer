@@ -1,13 +1,12 @@
 import React from "react";
 import Grid from "@material-ui/core/Grid";
 import {createStyles, makeStyles, Theme} from "@material-ui/core/styles";
-import {Card, Typography} from "@material-ui/core";
+import {IconButton, Typography} from "@material-ui/core";
 import {PlayCircleFilled} from "@material-ui/icons";
 import {Link} from "react-router-dom";
-import Image from "material-ui-image";
-import semantic from "../assets/semantic.png"
-import wikidata from "../assets/wikidata.svg"
-import sparql from "../assets/sparql.png"
+import {Logo} from "../components/common/Logo";
+import {LogoGrid} from "../components/common/LogoGrid";
+import {Card} from "../components/common/Card";
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
@@ -17,16 +16,18 @@ const useStyles = makeStyles((theme: Theme) =>
             padding: theme.spacing(10)
         },
         play: {
-            color: "red"
+            color: "red",
+            fontSize: "120px"
         },
         card: {
             width: "30%",
             height: "50vh",
+        },
+        playContainer: {
             display: "flex",
             flexDirection: "column",
+            justifyContent: "center",
             alignItems: "center",
-            justifyContent: "space-between",
-            padding: theme.spacing(5)
         }
     }),
 );
@@ -38,23 +39,18 @@ export default function WelcomePage() {
     return (
         <Grid container alignItems="center" justify="center" className={classes.root}>
             <Card className={classes.card}>
-                <Typography>
-                    SparQuizer
-                </Typography>
-                <Link to="/game">
-                    <PlayCircleFilled className={classes.play} fontSize="large"/>
-                </Link>
-                <Grid container spacing={10}>
-                    <Grid item xs={4}>
-                        <Image src={wikidata}/>
-                    </Grid>
-                    <Grid item xs={4}>
-                        <Image src={sparql}/>
-                    </Grid>
-                    <Grid item xs={4}>
-                        <Image src={semantic}/>
-                    </Grid>
-                </Grid>
+                <Logo/>
+                <div className={classes.playContainer}>
+                    <Link to="/game">
+                        <IconButton>
+                            <PlayCircleFilled className={classes.play} fontSize="inherit"/>
+                        </IconButton>
+                    </Link>
+                    <Typography variant="h5">
+                        Let's play!
+                    </Typography>
+                </div>
+                <LogoGrid/>
             </Card>
         </Grid>
     );

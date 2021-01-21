@@ -1,7 +1,6 @@
 import React from 'react';
 import {createStyles, makeStyles, Theme} from '@material-ui/core/styles';
 import clsx from 'clsx';
-import Card from '@material-ui/core/Card';
 import CardContent from '@material-ui/core/CardContent';
 import CardActions from '@material-ui/core/CardActions';
 import Typography from '@material-ui/core/Typography';
@@ -9,6 +8,7 @@ import {Casino} from '@material-ui/icons/';
 import Image from 'material-ui-image';
 import {Button, Grid} from "@material-ui/core";
 import PropertyList from "./PropertyList";
+import {Card} from "../common/Card";
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({

@@ -1,8 +1,8 @@
 import React from 'react';
-import Card from '@material-ui/core/Card';
 import CardContent from '@material-ui/core/CardContent';
 import {SparQLTypography} from "../common/SparQLTypography";
 import AnswersButtons from "./AnswersButtons";
+import {Card} from "../common/Card";
 
 
 export default function QuestionCard() {

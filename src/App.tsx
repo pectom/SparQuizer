@@ -2,6 +2,7 @@ import React from 'react';
 import {Switch, Route } from 'react-router-dom';
 import WelcomePage from "./pages/WelomePage";
 import GamePage from "./pages/GamePage";
+import FinishPage from "./pages/FinishPage";
 
 export default function App() {
 
@@ -11,7 +12,7 @@ export default function App() {
               <GamePage />
           </Route>
           <Route path="/finish">
-              <WelcomePage />
+              <FinishPage />
           </Route>
           <Route path="/">
               <WelcomePage />
