@@ -2,6 +2,7 @@ import React from 'react';
 import {createStyles, makeStyles, Theme} from '@material-ui/core/styles';
 import {Divider, List, ListItem, ListItemProps} from "@material-ui/core";
 import {SparQLTypography} from "../common/SparQLTypography";
+import {PropertyItem} from "../../model/app-model";
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
@@ -12,16 +13,6 @@ const useStyles = makeStyles((theme: Theme) =>
     }),
 );
 
-interface QueryItem {
-    name: string,
-    code: string,
-    link: string,
-}
-
-interface PropertyItem {
-    property: QueryItem,
-    values: QueryItem[]
-}
 
 interface ListItemLinkProps extends ListItemProps {
     sparqlProperty: PropertyItem
