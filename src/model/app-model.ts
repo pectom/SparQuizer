@@ -1,7 +1,6 @@
 export interface QueryItem {
-    name: string,
     code: string,
-    link: string,
+    label: string,
 }
 
 export interface PropertyItem {

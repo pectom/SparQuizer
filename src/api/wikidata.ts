@@ -1,15 +1,11 @@
-import axios, { AxiosInstance } from "axios";
+import axios from "axios";
 
-class Wikidata {
-  axios: AxiosInstance;
-
-  constructor() {
-    this.axios = axios.create({
+export class Wikidata {
+  static axios = axios.create({
       baseURL: "https://query.wikidata.org/bigdata/namespace/wdq",
-    });
-  }
+  });
 
-  public async sendQuery(query: string) {
+  public static async sendQuery(query: string) {
     return this.axios
       .get("/sparql", {
         params: {
@@ -21,5 +17,3 @@ class Wikidata {
   }
 
 }
-
-export default new Wikidata();

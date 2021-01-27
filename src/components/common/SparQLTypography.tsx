@@ -19,20 +19,21 @@ const useStyles = makeStyles((theme: Theme) =>
 );
 
 interface SparQLTypographyProps extends TypographyProps{
-    code: string
-    link: string
+    code?: string
+    sparQLProperty?: boolean
 }
 
-export const SparQLTypography: React.FC<SparQLTypographyProps> = (props) =>{
+export const SparQLTypography: React.FC<SparQLTypographyProps> = ({code, children, sparQLProperty=false, ...props}) => {
     const classes = useStyles()
-
-    const {children, code, link} = props
+    const linkPrefix = sparQLProperty ? "Property:" : ""
     return (
-            <Typography {...props} className={classes.container}>
-                {children}
-                <Link href={link} target={"_blank"} className={classes.link}>
+        <Typography {...props} className={classes.container}>
+            {children}
+            {code &&
+            <Link href={`https://www.wikidata.org/wiki/${linkPrefix}${code}`} target={"_blank"} className={classes.link}>
                 {`  ${code}`}
-                </Link>
-            </Typography>
+            </Link>
+            }
+        </Typography>
     )
 }

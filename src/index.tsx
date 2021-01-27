@@ -4,13 +4,20 @@ import './styles/index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 import {BrowserRouter} from "react-router-dom";
+import { ReactQueryDevtools } from 'react-query/devtools'
+import {QueryClient, QueryClientProvider} from "react-query";
+
+const queryClient = new QueryClient()
 
 ReactDOM.render(
-    <BrowserRouter>
-      <React.StrictMode>
-        <App/>
-      </React.StrictMode>
-    </BrowserRouter>,
+    <QueryClientProvider client={queryClient}>
+        <BrowserRouter>
+          <React.StrictMode>
+             <App/>
+          </React.StrictMode>
+        </BrowserRouter>
+        <ReactQueryDevtools initialIsOpen={false} />
+    </QueryClientProvider>,
   document.getElementById('root')
 );
 

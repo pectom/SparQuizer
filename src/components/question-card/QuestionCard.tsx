@@ -4,6 +4,8 @@ import {SparQLTypography} from "../common/SparQLTypography";
 import AnswersButtons from "./AnswersButtons";
 import {Card} from "../common/Card";
 import {createStyles, makeStyles, Theme} from "@material-ui/core/styles";
+import {usePropertyInfo} from "../../query/humans";
+import {QueryItem} from "../../model/app-model";
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
@@ -21,22 +23,35 @@ const useStyles = makeStyles((theme: Theme) =>
     }),
 );
 
-export default function QuestionCard() {
+interface QuestionCardProps{
+    propertyId: string
+    title: QueryItem
+    answer: QueryItem
+}
+
+export default function QuestionCard({propertyId, title, answer}: QuestionCardProps) {
     const classes = useStyles()
+    const { data: property, isFetching } = usePropertyInfo(`${propertyId}`)
+
     return (
-        <Card className={classes.card}>
-            <CardContent className={classes.content} >
-                <SparQLTypography variant="h3" color="textPrimary" code={"Q12312"} link="https://www.wikidata.org/wiki/Q11571">
-                    Cristiano Ronaldo
+    <Card className={classes.card}>
+        <CardContent className={classes.content} >
+            <SparQLTypography variant="h3" color="textPrimary" code={title.code}>
+                {title.label}
+            </SparQLTypography>
+            { !isFetching &&
+                <>
+                <SparQLTypography variant="h5" color="textPrimary" code={propertyId} sparQLProperty={true}>
+                    {property?.results.bindings[0].label.value}
                 </SparQLTypography>
-                <SparQLTypography variant="h5" color="textPrimary" code={"Q12312"} link="https://www.wikidata.org/wiki/Q11571">
-                   Oskarżony o
+                <SparQLTypography variant="h5" color="textPrimary">
+                    {property?.results.bindings[0].description.value}
                 </SparQLTypography>
-                <SparQLTypography variant="h5" color="textPrimary" code={"Q12312"} link="https://www.wikidata.org/wiki/Q11571">
-                    przestępstwo, za które osoba została skazana
-                </SparQLTypography>
-                <AnswersButtons/>
-            </CardContent>
-        </Card>
+                </>
+            }
+            <AnswersButtons propertyId={propertyId} answer={answer}/>
+        </CardContent>
+    </Card>
+
     );
 }

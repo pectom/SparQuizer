@@ -37,6 +37,18 @@ const useStyles = makeStyles((theme: Theme) =>
         name: {
             alignSelf: "center",
             marginBottom: theme.spacing(2)
+        },
+        hidden: {
+            display: "flex",
+            flexDirection: "row",
+            justifyContent: "center",
+            alignContent: "center",
+            minHeight: "500px"
+        },
+        hintText: {
+            display: "flex",
+            justifyContent: "center",
+            alignContent: "center",
         }
     }),
 );
@@ -44,49 +56,63 @@ const useStyles = makeStyles((theme: Theme) =>
 export default function HintCard() {
     const classes = useStyles();
     const [expanded, setExpanded] = React.useState(false);
+    const [hidden, setHidden] = React.useState(false);
 
     const handleExpandClick = () => {
         setExpanded(!expanded);
     };
 
+    const handleCardClick = () => {
+        setHidden(true);
+    };
     return (
         <Card className={classes.card}>
-            <CardContent className={classes.content}>
-                <Typography variant="h4" color="textPrimary" className={classes.name}>
-                    Cristiano
-                    Ronaldo
-                </Typography>
-                <Grid container>
-                    <Grid item xs={6}>
+            { hidden ?
+                <>
+                    <CardContent className={classes.content}>
+                        <Typography variant="h4" color="textPrimary" className={classes.name}>
+                            Cristiano
+                            Ronaldo
+                        </Typography>
+                        <Grid container>
+                            <Grid item xs={6}>
+                                <PropertyList/>
+                            </Grid>
+                            <Grid item xs={6}>
+                                <Image
+                                    src="https://upload.wikimedia.org/wikipedia/commons/8/8c/Cristiano_Ronaldo_2018.jpg"
+                                    disableSpinner
+                                    className={classes.image}
+                                    animationDuration={100}
+                                >
+                                </Image>
+                            </Grid>
+                        </Grid>
+                        {expanded &&
                         <PropertyList/>
-                    </Grid>
-                    <Grid item xs={6}>
-                        <Image
-                            src="https://upload.wikimedia.org/wikipedia/commons/8/8c/Cristiano_Ronaldo_2018.jpg"
-                            disableSpinner
-                            className={classes.image}
-                            animationDuration={100}
+                        }
+                    </CardContent>
+                    {!expanded &&
+                    <CardActions disableSpacing>
+                        <Button
+                            onClick={handleExpandClick}
+                            aria-expanded={expanded}
+                            aria-label="show more"
                         >
-                        </Image>
-                    </Grid>
-                </Grid>
-                {expanded &&
-                 <PropertyList/>
-                }
+                            <Casino className={clsx(classes.diceIcon, {
+                                [classes.diceIconClicked]: expanded,
+                            })}/>
+                            Draw new properties (-5 points)
+                        </Button>
+                    </CardActions>
+                    }
+                </>
+            :
+                <CardContent className={clsx(classes.content, classes.hidden)} onClick={handleCardClick}>
+                    <Typography variant="h4" className={classes.hintText}>
+                        Take a hint (-10p)
+                    </Typography>
             </CardContent>
-            {!expanded &&
-            <CardActions disableSpacing>
-                <Button
-                    onClick={handleExpandClick}
-                    aria-expanded={expanded}
-                    aria-label="show more"
-                >
-                    <Casino className={clsx(classes.diceIcon, {
-                        [classes.diceIconClicked]: expanded,
-                    })}/>
-                    Draw new properties (-5 points)
-                </Button>
-            </CardActions>
             }
         </Card>
     );

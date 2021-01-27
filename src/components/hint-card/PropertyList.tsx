@@ -25,15 +25,15 @@ function ListItemLink(props: ListItemLinkProps) {
     return (
         <>
             <ListItem>
-                <SparQLTypography code={property.code} link={property.link} >
-                    {property.name}
+                <SparQLTypography code={property.code}  >
+                    {property.label}
                 </SparQLTypography>
                 <List className={classes.button}>
                     {
                         sparqlProperty.values.map(property => {
                             return (
-                                <SparQLTypography code={property.code} link={property.link} >
-                                    {property.name}
+                                <SparQLTypography code={property.code} >
+                                    {property.label}
                                 </SparQLTypography>
                             )
                         })
@@ -49,66 +49,55 @@ export default function PropertyList() {
     const data: PropertyItem[] = [
         {
             property: {
-                name: "sex or gender",
+                label: "sex or gender",
                 code: "P21",
-                link: "https://www.wikidata.org/wiki/Property:P21"
             },
             values: [
                 {
-                    name: "male",
+                    label: "male",
                     code: "Q6581097",
-                    link: "https://www.wikidata.org/wiki/Q6581097"
                 },
                 {
-                    name: "male",
+                    label: "male",
                     code: "Q6581097",
-                    link: "https://www.wikidata.org/wiki/Q6581097"
                 }]
         },
         {
             property: {
-                name: "sex or gender",
+                label: "sex or gender",
                 code: "P21",
-                link: "https://www.wikidata.org/wiki/Property:P21"
             },
             values: [
                 {
-                    name: "male",
+                    label: "male",
                     code: "Q6581097",
-                    link: "https://www.wikidata.org/wiki/Q6581097"
                 },
                 {
-                    name: "male",
+                    label: "male",
                     code: "Q6581097",
-                    link: "https://www.wikidata.org/wiki/Q6581097"
                 }]
         },
         {
             property: {
-                name: "sex or gender",
+                label: "sex or gender",
                 code: "P21",
-                link: "https://www.wikidata.org/wiki/Property:P21"
             },
             values: [
                 {
-                    name: "male",
+                    label: "male",
                     code: "Q6581097",
-                    link: "https://www.wikidata.org/wiki/Q6581097"
                 },
                 {
-                    name: "male",
+                    label: "male",
                     code: "Q6581097",
-                    link: "https://www.wikidata.org/wiki/Q6581097"
                 },
                 {
-                    name: "male",
+                    label: "male",
                     code: "Q6581097",
-                    link: "https://www.wikidata.org/wiki/Q6581097"
                 },
                 {
-                    name: "male",
+                    label: "male",
                     code: "Q6581097",
-                    link: "https://www.wikidata.org/wiki/Q6581097"
                 }]
         },
     ]

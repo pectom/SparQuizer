@@ -31,7 +31,15 @@ export default function GamePage() {
             <Header/>
             <Grid container spacing={3}>
                 <Grid item xs={8}>
-                    <QuestionCard/>
+                    <QuestionCard propertyId={"P1399"}
+                    title={{
+                        code: "Q12312",
+                        label: "Cristiano Ronaldo"
+                    }}
+                    answer={{
+                        code: "Q12312",
+                        label: "Cristiano Ronaldo"
+                    }}/>
                 </Grid>
                 <Grid item xs={4}>
                     <HintCard/>

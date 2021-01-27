@@ -1,19 +1,50 @@
-export const query = `
-    PREFIX wikibase: <http://wikiba.se/ontology#>
-    PREFIX wd: <http://www.wikidata.org/entity/>
-    PREFIX wdt: <http://www.wikidata.org/prop/direct/>
-    PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+import {useQuery} from "react-query";
+import {Wikidata} from "../api/wikidata";
 
-    SELECT ?president ?cause ?dob ?dod WHERE {
-        ?pid wdt:P39 wd:Q11696 .
-        ?pid wdt:P509 ?cid .
-        ?pid wdt:P569 ?dob .
-        ?pid wdt:P570 ?dod .
+const humansQuery = `
+        SELECT ?item ?itemLabel WHERE {
+          ?item wdt:P106 wd:Q2736.
+          ?item wdt:P18 ?img 
+          SERVICE wikibase:label { bd:serviceParam wikibase:language "[AUTO_LANGUAGE],nl". }
+        }
+        LIMIT 10
+        
+    `
 
-        OPTIONAL {
-        ?pid rdfs:label ?president filter (lang(?president) = "en") .s
-    }
-    OPTIONAL {
-          ?cid rdfs:label ?cause filter (lang(?cause) = "en") .
-    }
-  }`
+const humanInfoQuery = (id: string) =>
+    `
+        SELECT ?property ?value WHERE {
+          ${id} ?property ?value.
+        }
+    `
+
+const propertyInfoQuery = (id: string) =>
+    `
+        SELECT *
+        WHERE {
+             SERVICE wikibase:label { bd:serviceParam wikibase:language "en".
+                  wd:${id} rdfs:label         ?label.
+                  wd:${id} schema:description ?description.
+              }
+        }
+    `
+
+
+export function useAllHumansIds(){
+   return useQuery('humans', () =>
+        Wikidata.sendQuery(humansQuery)
+    )
+}
+
+export function useHumanById(humanId: string){
+    return useQuery(humanId && ['human', humanId], () =>
+        Wikidata.sendQuery(humanInfoQuery(humanId))
+    )
+}
+
+export function usePropertyInfo(propertyId: string){
+    return useQuery(propertyId && ['property', propertyId], () =>
+        Wikidata.sendQuery(propertyInfoQuery(propertyId))
+    )
+}
+
