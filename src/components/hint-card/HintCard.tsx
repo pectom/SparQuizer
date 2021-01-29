@@ -9,6 +9,9 @@ import Image from 'material-ui-image';
 import {Button, Grid} from "@material-ui/core";
 import PropertyList from "./PropertyList";
 import {Card} from "../common/Card";
+import {Human} from "../../query/humans";
+import {SparQLTypography} from "../common/SparQLTypography";
+import {PropertyItem} from "../../model/app-model";
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
@@ -53,7 +56,11 @@ const useStyles = makeStyles((theme: Theme) =>
     }),
 );
 
-export default function HintCard() {
+interface HintCardProps {
+    human?: Human
+}
+
+export default function HintCard({human}: HintCardProps) {
     const classes = useStyles();
     const [expanded, setExpanded] = React.useState(false);
     const [hidden, setHidden] = React.useState(false);
@@ -67,20 +74,19 @@ export default function HintCard() {
     };
     return (
         <Card className={classes.card}>
-            { hidden ?
+            {hidden && human ?
                 <>
                     <CardContent className={classes.content}>
-                        <Typography variant="h4" color="textPrimary" className={classes.name}>
-                            Cristiano
-                            Ronaldo
-                        </Typography>
+                        <SparQLTypography variant="h4" color="textPrimary" className={classes.name} code={human.name.values[0].code}>
+                            {human.name.values[0].label}
+                        </SparQLTypography>
                         <Grid container>
                             <Grid item xs={6}>
-                                <PropertyList/>
+                                <PropertyList properties={human}/>
                             </Grid>
                             <Grid item xs={6}>
                                 <Image
-                                    src="https://upload.wikimedia.org/wikipedia/commons/8/8c/Cristiano_Ronaldo_2018.jpg"
+                                    src={human.img.values[0].label}
                                     disableSpinner
                                     className={classes.image}
                                     animationDuration={100}
@@ -89,7 +95,7 @@ export default function HintCard() {
                             </Grid>
                         </Grid>
                         {expanded &&
-                        <PropertyList/>
+                            <PropertyList properties={human}/>
                         }
                     </CardContent>
                     {!expanded &&

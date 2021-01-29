@@ -1,5 +1,5 @@
 export interface QueryItem {
-    code: string,
+    code?: string,
     label: string,
 }
 

@@ -3,6 +3,7 @@ import {createStyles, makeStyles, Theme} from '@material-ui/core/styles';
 import {Divider, List, ListItem, ListItemProps} from "@material-ui/core";
 import {SparQLTypography} from "../common/SparQLTypography";
 import {PropertyItem} from "../../model/app-model";
+import {Human} from "../../query/humans";
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
@@ -44,68 +45,15 @@ function ListItemLink(props: ListItemLinkProps) {
         </>
     );
 }
+interface PropertyListOptions{
+    properties: Human
+}
 
-export default function PropertyList() {
-    const data: PropertyItem[] = [
-        {
-            property: {
-                label: "sex or gender",
-                code: "P21",
-            },
-            values: [
-                {
-                    label: "male",
-                    code: "Q6581097",
-                },
-                {
-                    label: "male",
-                    code: "Q6581097",
-                }]
-        },
-        {
-            property: {
-                label: "sex or gender",
-                code: "P21",
-            },
-            values: [
-                {
-                    label: "male",
-                    code: "Q6581097",
-                },
-                {
-                    label: "male",
-                    code: "Q6581097",
-                }]
-        },
-        {
-            property: {
-                label: "sex or gender",
-                code: "P21",
-            },
-            values: [
-                {
-                    label: "male",
-                    code: "Q6581097",
-                },
-                {
-                    label: "male",
-                    code: "Q6581097",
-                },
-                {
-                    label: "male",
-                    code: "Q6581097",
-                },
-                {
-                    label: "male",
-                    code: "Q6581097",
-                }]
-        },
-    ]
-
+export default function PropertyList({properties}: PropertyListOptions) {
     return (
         <List>
             {
-                data.map(property => {
+                Object.values(properties).map(property => {
                     return <ListItemLink sparqlProperty={property}/>
                 })
             }
