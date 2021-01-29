@@ -11,20 +11,24 @@ const humansQuery = `
         LIMIT 10
         
     `
-
-const HumanProperties = {
+export const BaseHumanProps = {
     "img": "P18",
-    "sex": "P21",
-    "county": "P27",
-    "pseudonym": "P742",
+    "country": "P27",
     "dateOfBirth": "P569",
-    "placeOfBirth": "P19",
-    "numberOfChildren": "P1971",
-    "language": "P103",
     "occupation": "P106",
+}
+export const ExtendedHumanProps = {
+    "numberOfChildren": "P1971",
+    "pseudonym": "P742",
     "awards": "P166",
     "convicted": "P1399",
 }
+
+const HumanProperties = {
+    ...BaseHumanProps,
+    ...ExtendedHumanProps
+}
+
 const headerName = (name: string): string => {
     return `(concat('[',group_concat(distinct ?${name};separator=','),']') as ?${name})`
 }

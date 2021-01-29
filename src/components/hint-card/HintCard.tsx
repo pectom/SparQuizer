@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import {createStyles, makeStyles, Theme} from '@material-ui/core/styles';
 import clsx from 'clsx';
 import CardContent from '@material-ui/core/CardContent';
@@ -9,7 +9,7 @@ import Image from 'material-ui-image';
 import {Button, Grid} from "@material-ui/core";
 import PropertyList from "./PropertyList";
 import {Card} from "../common/Card";
-import {Human} from "../../query/humans";
+import {BaseHumanProps, ExtendedHumanProps, Human} from "../../query/humans";
 import {SparQLTypography} from "../common/SparQLTypography";
 import {PropertyItem} from "../../model/app-model";
 
@@ -64,6 +64,25 @@ export default function HintCard({human}: HintCardProps) {
     const classes = useStyles();
     const [expanded, setExpanded] = React.useState(false);
     const [hidden, setHidden] = React.useState(false);
+    const [baseHumanProps, setBaseHumanProps] = React.useState<PropertyItem[]>([]);
+    const [extendHumanProps, setExtendHumanProps] = React.useState<PropertyItem[]>([]);
+
+    useEffect(() => {
+        if(human){
+            const base: PropertyItem[] = []
+            const extend: PropertyItem[] = []
+            Object.keys(BaseHumanProps).forEach(key => {
+                if(key !== "img"){
+                    base.push(human[key])
+                }
+            })
+            Object.keys(ExtendedHumanProps).forEach(key => {
+                extend.push(human[key])
+            })
+            setBaseHumanProps(base)
+            setExtendHumanProps(extend)
+        }
+    }, [human])
 
     const handleExpandClick = () => {
         setExpanded(!expanded);
@@ -72,6 +91,8 @@ export default function HintCard({human}: HintCardProps) {
     const handleCardClick = () => {
         setHidden(true);
     };
+
+
     return (
         <Card className={classes.card}>
             {hidden && human ?
@@ -82,7 +103,7 @@ export default function HintCard({human}: HintCardProps) {
                         </SparQLTypography>
                         <Grid container>
                             <Grid item xs={6}>
-                                <PropertyList properties={human}/>
+                                <PropertyList properties={baseHumanProps}/>
                             </Grid>
                             <Grid item xs={6}>
                                 <Image
@@ -95,7 +116,7 @@ export default function HintCard({human}: HintCardProps) {
                             </Grid>
                         </Grid>
                         {expanded &&
-                            <PropertyList properties={human}/>
+                            <PropertyList properties={extendHumanProps} />
                         }
                     </CardContent>
                     {!expanded &&

@@ -3,7 +3,6 @@ import {createStyles, makeStyles, Theme} from '@material-ui/core/styles';
 import {Divider, List, ListItem, ListItemProps} from "@material-ui/core";
 import {SparQLTypography} from "../common/SparQLTypography";
 import {PropertyItem} from "../../model/app-model";
-import {Human} from "../../query/humans";
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
@@ -46,14 +45,14 @@ function ListItemLink(props: ListItemLinkProps) {
     );
 }
 interface PropertyListOptions{
-    properties: Human
+    properties: PropertyItem[]
 }
 
 export default function PropertyList({properties}: PropertyListOptions) {
     return (
         <List>
             {
-                Object.values(properties).map(property => {
+                properties.map(property => {
                     return <ListItemLink sparqlProperty={property}/>
                 })
             }
