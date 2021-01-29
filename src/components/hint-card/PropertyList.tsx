@@ -3,13 +3,20 @@ import {createStyles, makeStyles, Theme} from '@material-ui/core/styles';
 import {Divider, List, ListItem, ListItemProps} from "@material-ui/core";
 import {SparQLTypography} from "../common/SparQLTypography";
 import {PropertyItem} from "../../model/app-model";
+import * as _ from "lodash"
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
-        button: {
-            color: "#3d3636",
-            width: "50%"
-        }
+        property: {
+            width: "170px",
+            padding: "5px"
+        },
+        list: {
+            width: "100%",
+            borderLeft: "2px solid",
+            borderLeftColor: theme.palette.grey.A100,
+            padding: "5px"
+        },
     }),
 );
 
@@ -25,14 +32,14 @@ function ListItemLink(props: ListItemLinkProps) {
     return (
         <>
             <ListItem>
-                <SparQLTypography code={property.code}  >
-                    {property.label}
+                <SparQLTypography code={property.code} className={classes.property}>
+                    {_.startCase(_.camelCase(property.label))}
                 </SparQLTypography>
-                <List className={classes.button}>
+                <List className={classes.list}>
                     {
                         sparqlProperty.values.map(property => {
                             return (
-                                <SparQLTypography code={property.code} >
+                                <SparQLTypography code={property.code}>
                                     {property.label}
                                 </SparQLTypography>
                             )
@@ -53,7 +60,7 @@ export default function PropertyList({properties}: PropertyListOptions) {
         <List>
             {
                 properties.map(property => {
-                    return <ListItemLink sparqlProperty={property}/>
+                    return <ListItemLink sparqlProperty={property} />
                 })
             }
         </List>

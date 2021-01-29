@@ -1,6 +1,7 @@
 import React from "react";
 import {Link, Typography, TypographyProps} from "@material-ui/core";
 import {createStyles, makeStyles, Theme} from "@material-ui/core/styles";
+import clsx from "clsx";
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
@@ -8,7 +9,8 @@ const useStyles = makeStyles((theme: Theme) =>
             width: "100%",
             display: "flex",
             justifyContent: "center",
-            alignContent: "center"
+            alignContent: "center",
+            align: "center"
         },
         link: {
             fontSize: 12,
@@ -27,7 +29,7 @@ export const SparQLTypography: React.FC<SparQLTypographyProps> = ({code, childre
     const classes = useStyles()
     const linkPrefix = sparQLProperty ? "Property:" : ""
     return (
-        <Typography {...props} className={classes.container}>
+        <Typography {...props} className={clsx(classes.container, props.className)}>
             {children}
             {code &&
             <Link href={`https://www.wikidata.org/wiki/${linkPrefix}${code}`} target={"_blank"} className={classes.link}>
