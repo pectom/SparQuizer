@@ -67,7 +67,7 @@ export default function QuestionCard({propertyId, title, answer}: QuestionCardPr
                     </SparQLTypography>
                 </>
                 }
-                <AnswersButtons propertyId={propertyId} answer={answer}/>
+                <AnswersButtons/>
             </div>
         </CardContent>
     </Card>

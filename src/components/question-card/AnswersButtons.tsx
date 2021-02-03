@@ -1,12 +1,15 @@
-import Grid from "@material-ui/core/Grid";
 import {Button} from "@material-ui/core";
 import React from "react";
 import {createStyles, makeStyles, Theme} from "@material-ui/core/styles";
 import {SparQLTypography} from "../common/SparQLTypography";
-import {QueryItem} from "../../state/AppModel";
+import {useModalContext} from "../ModalContexProvider";
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
+        container: {
+            height: 250,
+            width: "100%"
+        },
         button: {
             width: "50%",
             height: 100
@@ -14,40 +17,68 @@ const useStyles = makeStyles((theme: Theme) =>
     }),
 );
 
-interface AnswersButtonsProps{
-    propertyId: string
-    answer: QueryItem
+interface Answer {
+    label: string,
+    code: string,
+    isValidAnswer: boolean
 }
 
-export default function AnswersButtons({propertyId, answer}:AnswersButtonsProps) {
+export default function AnswersButtons() {
     const classes = useStyles();
+    const {setOpen, setTitle, setBody} = useModalContext()
+
+    const onClick = (isValidAnswer: boolean) => {
+        setOpen(true)
+        let title, body
+        if (isValidAnswer) {
+            title = "Brawo"
+            body = "Dobrze"
+        } else {
+            title = "Lipa"
+            body = "Źle"
+        }
+
+        setTitle(title)
+        setBody(body)
+    }
+
+    const answers: Answer[] = [
+        {
+            label: "Kradzież",
+            code: "Q12312",
+            isValidAnswer: true
+        },
+        {
+            label: "Gawłt",
+            code: "Q12312",
+            isValidAnswer: false
+        },
+        {
+            label: "Kradzież",
+            code: "Q12312",
+            isValidAnswer: false
+        },
+        {
+            label: "Morderstwo",
+            code: "Q12312",
+            isValidAnswer: false
+        },
+    ]
 
     return (
-        <Grid container >
-            <Grid container>
-                <Button className={classes.button}>
-                    <SparQLTypography code={answer.code} >
-                        {answer.label}
-                    </SparQLTypography>
-                </Button>
-                <Button className={classes.button}>
-                    <SparQLTypography code="Q12312" >
-                        Oszustwa podatkowe
-                    </SparQLTypography>
-                </Button>
-            </Grid>
-            <Grid container>
-                <Button className={classes.button}>
-                    <SparQLTypography code="Q12312" >
-                        Kradzież
-                    </SparQLTypography>
-                </Button>
-                <Button className={classes.button}>
-                    <SparQLTypography code="Q12312" >
-                        Morderstwo
-                    </SparQLTypography>
-                </Button>
-            </Grid>
-        </Grid>
+        <div className={classes.container}>
+            {
+                answers.map(answer => {
+                    return (
+                        <Button className={classes.button} onClick={() => onClick(answer.isValidAnswer)}>
+                            <SparQLTypography code={answer.code}>
+                                {answer.label}
+                            </SparQLTypography>
+                        </Button>
+                    )
+                })
+            }
+            <></>
+        </div>
     );
 }

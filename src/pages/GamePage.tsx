@@ -6,6 +6,8 @@ import HintCard from "../components/hint-card/HintCard";
 import {createStyles, makeStyles, Theme} from "@material-ui/core/styles";
 import {parseResponse, useHumanById} from "../query/humans";
 import {Human} from "../state/AppModel";
+import RoundModal from "../components/RoundModal";
+import {ModalContextProvider} from "../components/ModalContexProvider";
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
@@ -32,27 +34,30 @@ export default function GamePage() {
     const {data, isFetching} = useHumanById(id)
 
     useEffect(() => {
-        if (data){
+        if (data) {
             setHuman(parseResponse(id, data.results.bindings[0]))
         }
     }, [data])
 
     return (
-        <Grid container alignItems="center" justify="center" spacing={1} className={classes.root}>
-            <Header/>
-            <Grid container spacing={3}>
-                <Grid item xs={8}>
-                    {
-                        !isFetching && human &&
-                        <QuestionCard propertyId={"P1399"}
-                                      title={human.name.values[0]}
-                                      answer={human.convicted.values[0]}/>
-                    }
+        <ModalContextProvider>
+            <Grid container alignItems="center" justify="center" spacing={1} className={classes.root}>
+                <Header/>
+                <Grid container spacing={3}>
+                    <Grid item xs={8}>
+                        {
+                            !isFetching && human &&
+                            <QuestionCard propertyId={"P1399"}
+                                          title={human.name.values[0]}
+                                          answer={human.convicted.values[0]}/>
+                        }
+                    </Grid>
+                    <Grid item xs={4}>
+                        <HintCard human={human}/>
+                    </Grid>
                 </Grid>
-                <Grid item xs={4}>
-                    <HintCard human={human}/>
-                </Grid>
+                <RoundModal/>
             </Grid>
-        </Grid>
+        </ModalContextProvider>
     );
 }
