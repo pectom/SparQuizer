@@ -1,12 +1,15 @@
 import {createContext, ReactNode, useContext, useState} from "react";
+import {ModalModeKeys} from "./RoundModal";
 
 export interface MondalContextValues {
-    title: string;
-    setTitle: (title: string) => void;
     open: boolean;
     setOpen: (open: boolean) => void;
-    body: string;
-    setBody: (body: string) => void;
+    mode: ModalModeKeys,
+    setMode: (mode: ModalModeKeys) => void,
+    points: number,
+    setPoints: (points: number) => void,
+    answer: string,
+    setAnswer: (answer: string) => void
 }
 
 export const ModalContext = createContext<MondalContextValues | null>(null);
@@ -18,19 +21,22 @@ interface ModalContextProviderProps {
 export const ModalContextProvider:
     React.FC<ModalContextProviderProps> = ({children}: ModalContextProviderProps) => {
 
-    const [title, setTitle] = useState<string>("");
     const [open, setOpen] = useState<boolean>(false);
-    const [body, setBody] = useState<string>("");
+    const [mode, setMode] = useState<ModalModeKeys>("timeout");
+    const [points, setPoints] = useState<number>(0);
+    const [answer, setAnswer] = useState<string>("");
 
     return (
         <ModalContext.Provider
             value={{
-                title,
-                setTitle,
                 open,
                 setOpen,
-                body,
-                setBody,
+                mode,
+                setMode,
+                points,
+                setPoints,
+                answer,
+                setAnswer,
             }}
         >
             {children}

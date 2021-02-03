@@ -25,21 +25,18 @@ interface Answer {
 
 export default function AnswersButtons() {
     const classes = useStyles();
-    const {setOpen, setTitle, setBody} = useModalContext()
+    const {setOpen, setMode, setAnswer, setPoints} = useModalContext()
 
     const onClick = (isValidAnswer: boolean) => {
         setOpen(true)
-        let title, body
         if (isValidAnswer) {
-            title = "Brawo"
-            body = "Dobrze"
+            setMode("good")
+            setPoints(10)
         } else {
-            title = "Lipa"
-            body = "Źle"
+            setMode("wrong")
+            setPoints(-10)
         }
-
-        setTitle(title)
-        setBody(body)
+        setAnswer("good")
     }
 
     const answers: Answer[] = [

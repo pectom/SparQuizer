@@ -39,6 +39,8 @@ export default function GamePage() {
         }
     }, [data])
 
+
+
     return (
         <ModalContextProvider>
             <Grid container alignItems="center" justify="center" spacing={1} className={classes.root}>
