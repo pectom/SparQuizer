@@ -20,7 +20,6 @@ export const appReducer = (
     state: AppModel = {points: 0, questionCounter: 0},
     action: AppActionModel
 ): AppModel => {
-    debugger
     switch (action.type) {
         case AppActionType.NEW_ROUND:
             const pointsDifference = action.payload ? action.payload.points : 0

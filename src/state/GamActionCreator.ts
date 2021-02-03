@@ -2,7 +2,6 @@ import {AppActionModel, AppActionType} from "./AppReducer";
 
 export class GameActionCreator{
     static newGame(): AppActionModel{
-        debugger
         return {
             type: AppActionType.NEW_GAME
         }
