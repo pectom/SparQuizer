@@ -1,12 +1,11 @@
 import React from "react";
 import Grid from "@material-ui/core/Grid";
 import {createStyles, makeStyles, Theme} from "@material-ui/core/styles";
-import {IconButton, Typography} from "@material-ui/core";
-import {PlayCircleFilled} from "@material-ui/icons";
-import {Link} from "react-router-dom";
+import {Typography} from "@material-ui/core";
 import {Logo} from "../components/common/Logo";
 import {LogoGrid} from "../components/common/LogoGrid";
 import {Card} from "../components/common/Card";
+import {NewGameButton} from "../components/common/NewGameButtons";
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
@@ -41,11 +40,7 @@ export default function WelcomePage() {
             <Card className={classes.card}>
                 <Logo/>
                 <div className={classes.playContainer}>
-                    <Link to="/game">
-                        <IconButton>
-                            <PlayCircleFilled className={classes.play} fontSize="inherit"/>
-                        </IconButton>
-                    </Link>
+                    <NewGameButton iconProps={{className: classes.play, fontSize: "inherit"}}/>
                     <Typography variant="h5">
                         Let's play!
                     </Typography>

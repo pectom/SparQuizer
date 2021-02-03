@@ -3,7 +3,7 @@ import {Button} from "@material-ui/core";
 import React from "react";
 import {createStyles, makeStyles, Theme} from "@material-ui/core/styles";
 import {SparQLTypography} from "../common/SparQLTypography";
-import {QueryItem} from "../../model/app-model";
+import {QueryItem} from "../../state/AppModel";
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({

@@ -8,13 +8,11 @@ export interface PropertyItem {
     values: QueryItem[]
 }
 
-type HumanId = string
-type Time = number
-type Point = number
+export type Point = number
+export type Counter = number
 
-interface Human extends QueryItem{
-    image: string,
-    properties: PropertyItem[]
+export interface Human {
+    [key: string]: PropertyItem
 }
 
 export interface Question{
@@ -24,8 +22,6 @@ export interface Question{
 }
 
 export interface AppModel{
-    humanList: HumanId[]
     points: Point
-    question: Question
-    questionNumber: number
+    questionCounter: Counter
 }

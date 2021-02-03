@@ -6,6 +6,8 @@ import React from "react";
 import {createStyles, makeStyles, Theme} from "@material-ui/core/styles";
 import {Logo} from "./common/Logo";
 import clsx from "clsx";
+import {useSelector} from "react-redux";
+import {AppModel} from "../state/AppModel";
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
@@ -32,6 +34,7 @@ const useStyles = makeStyles((theme: Theme) =>
 );
 export default function Header() {
     const classes = useStyles();
+    const {points} = useSelector((state: AppModel) => state)
 
     return (
         <Grid container justify={"space-between"} spacing={2} className={classes.container}>
@@ -50,7 +53,7 @@ export default function Header() {
                 <Paper elevation={3} className={classes.paper} >
                     <EmojiEvents className={clsx(classes.trophy, classes.icon)}/>
                     <Typography>
-                        220 points
+                        {points} points
                     </Typography>
                 </Paper>
             </Grid>

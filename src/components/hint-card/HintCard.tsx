@@ -9,9 +9,9 @@ import Image from 'material-ui-image';
 import {Button, Grid} from "@material-ui/core";
 import PropertyList from "./PropertyList";
 import {Card} from "../common/Card";
-import {BaseHumanProps, ExtendedHumanProps, Human} from "../../query/humans";
+import {BaseHumanProps, ExtendedHumanProps} from "../../query/humans";
 import {SparQLTypography} from "../common/SparQLTypography";
-import {PropertyItem} from "../../model/app-model";
+import {Human, PropertyItem} from "../../state/AppModel";
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({

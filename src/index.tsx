@@ -4,22 +4,27 @@ import './styles/index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 import {BrowserRouter} from "react-router-dom";
-import { ReactQueryDevtools } from 'react-query/devtools'
+import {ReactQueryDevtools} from 'react-query/devtools'
 import {QueryClient, QueryClientProvider} from "react-query";
+import {Provider} from "react-redux";
+import { appStore } from "./state/AppStore";
 
 const queryClient = new QueryClient()
 
 ReactDOM.render(
     <QueryClientProvider client={queryClient}>
-        <BrowserRouter>
-          <React.StrictMode>
-             <App/>
-          </React.StrictMode>
-        </BrowserRouter>
-        <ReactQueryDevtools initialIsOpen={false} />
+        <Provider store={appStore}>
+            <BrowserRouter>
+                <React.StrictMode>
+                    <App/>
+                </React.StrictMode>
+            </BrowserRouter>
+        </Provider>
+        <ReactQueryDevtools initialIsOpen={false}/>
     </QueryClientProvider>,
-  document.getElementById('root')
-);
+    document.getElementById('root')
+)
+;
 
 // If you want to start measuring performance in your app, pass a function
 // to log results (for example: reportWebVitals(console.log))

@@ -2,7 +2,7 @@ import React from 'react';
 import {createStyles, makeStyles, Theme} from '@material-ui/core/styles';
 import {Divider, List, ListItem, ListItemProps} from "@material-ui/core";
 import {SparQLTypography} from "../common/SparQLTypography";
-import {PropertyItem} from "../../model/app-model";
+import {PropertyItem} from "../../state/AppModel";
 import * as _ from "lodash"
 
 const useStyles = makeStyles((theme: Theme) =>

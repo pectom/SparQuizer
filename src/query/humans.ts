@@ -1,6 +1,6 @@
 import {useQuery} from "react-query";
 import {Wikidata} from "../api/wikidata";
-import {PropertyItem, QueryItem} from "../model/app-model";
+import {Human, QueryItem} from "../state/AppModel";
 
 const humansQuery = `
         SELECT ?item ?itemLabel WHERE {
@@ -51,8 +51,6 @@ const queryCreator = (id: string) => {
         return `${previousValue} ?${currentValue} rdfs:label ?${currentValue}Label.`
     }, `wd:${id} rdfs:label ?name.`)
 
-    debugger
-
     return (
         `
         SELECT ${headers} WHERE {
@@ -79,10 +77,6 @@ const propertyInfoQuery = (id: string) =>
         }
     `
 
-export interface Human {
-    [key: string]: PropertyItem
-}
-
 export interface QueryResult {
     [key: string]: {
         type: string
@@ -105,13 +99,12 @@ export function parseResponse(id: string, data: QueryResult): Human {
             ]
         }
     }
-    delete data["name"]
     Object.entries(HumanProperties).forEach(propItem => {
         const codes = data[propItem[0]].value.slice(1, data[propItem[0]].value.length - 1).split(",") as string[]
         const labels = data[`${propItem[0]}Label`].value.slice(1, data[`${propItem[0]}Label`].value.length - 1).split(",") as string[]
         const humanValue: QueryItem[] = []
         codes.forEach((link, index) => {
-            const label = labels[index]
+            let label = labels[index]
             let queryItem;
             if (link !== label) {
                 const code = link.split("/").slice(-1).pop()
@@ -120,6 +113,9 @@ export function parseResponse(id: string, data: QueryResult): Human {
                     label
                 }
             } else {
+                if(propItem[0].includes("date")){
+                    label = new Date(label).toISOString().slice(0,10);
+                }
                 queryItem = {
                     label
                 }

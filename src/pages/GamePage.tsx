@@ -4,7 +4,8 @@ import Header from "../components/Header";
 import QuestionCard from "../components/question-card/QuestionCard";
 import HintCard from "../components/hint-card/HintCard";
 import {createStyles, makeStyles, Theme} from "@material-ui/core/styles";
-import {Human, parseResponse, useHumanById} from "../query/humans";
+import {parseResponse, useHumanById} from "../query/humans";
+import {Human} from "../state/AppModel";
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({

@@ -5,7 +5,7 @@ import AnswersButtons from "./AnswersButtons";
 import {Card} from "../common/Card";
 import {createStyles, makeStyles, Theme} from "@material-ui/core/styles";
 import {usePropertyInfo} from "../../query/humans";
-import {QueryItem} from "../../model/app-model";
+import {QueryItem} from "../../state/AppModel";
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
