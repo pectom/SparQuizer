@@ -3,9 +3,6 @@ import React from "react";
 import {createStyles, makeStyles, Theme} from "@material-ui/core/styles";
 import {SparQLTypography} from "../common/SparQLTypography";
 import {useModalContext} from "../ModalContexProvider";
-import {useDispatch} from "react-redux";
-import {GameActionCreator} from "../../state/GamActionCreator";
-import {useConfigContext} from "../../state/ConfigContext";
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
@@ -28,23 +25,16 @@ interface Answer {
 
 export default function AnswersButtons() {
     const classes = useStyles();
-    const {setOpen, setMode, setAnswer, setPoints} = useModalContext()
-    const dispatch = useDispatch();
-    const {goodAnswer, wrongAnswer} = useConfigContext()
+    const {setOpen, setMode, setAnswer} = useModalContext()
 
     const onClick = (isValidAnswer: boolean) => {
         setOpen(true)
-        let points;
         if (isValidAnswer) {
             setMode("good")
-            points = goodAnswer
         } else {
             setMode("wrong")
-            points =  wrongAnswer
         }
-        dispatch(GameActionCreator.newRound(points))
         setAnswer("good")
-        setPoints(points)
     }
 
     const answers: Answer[] = [

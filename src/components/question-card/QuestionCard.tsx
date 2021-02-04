@@ -8,6 +8,7 @@ import {usePropertyInfo} from "../../query/humans";
 import {AppModel, QueryItem} from "../../state/AppModel";
 import {Typography} from "@material-ui/core";
 import {useSelector} from "react-redux";
+import {useConfigContext} from "../../state/ConfigContext";
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
@@ -46,12 +47,13 @@ export default function QuestionCard({propertyId, title, answer}: QuestionCardPr
     const classes = useStyles()
     const { data: property, isFetching } = usePropertyInfo(`${propertyId}`)
     const {questionCounter} = useSelector((state: AppModel) => state)
+    const {questionNumber} = useConfigContext()
 
     return (
     <Card className={classes.card}>
         <CardContent className={classes.cardContent} >
             <Typography className={classes.questionNumber} variant="h6">
-                Question: {questionCounter}/10
+                Question: {questionCounter} / {questionNumber}
             </Typography>
             <div className={classes.content}>
                 <SparQLTypography variant="h3" color="textPrimary" code={title.code}>

@@ -11,6 +11,9 @@ import {Button, Divider, Typography} from "@material-ui/core";
 import {useModalContext} from "./ModalContexProvider";
 import {green, red} from "@material-ui/core/colors";
 import clsx from "clsx";
+import {useDispatch} from "react-redux";
+import {useConfigContext} from "../state/ConfigContext";
+import {GameActionCreator} from "../state/GamActionCreator";
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
@@ -105,10 +108,13 @@ const modalMode: {[key: string]: ModalModeProps} = {
 
 export default function RoundModal(): JSX.Element {
     const classes = useStyles();
-    const {open, setOpen, mode, answer, points} = useModalContext();
+    const {open, setOpen, mode, answer} = useModalContext();
     const [title, setTitle] = useState<string>("");
     const [body, setBody] = useState<string>("");
     const [success, setSuccess] = useState<boolean>(false);
+    const [updatedPoints, setUpdatedPoints] = useState<number>(0);
+    const dispatch = useDispatch();
+    const {wrongAnswer, goodAnswer, timeout} = useConfigContext()
 
     const handleClose = (): void => {
         setOpen(false);
@@ -118,7 +124,27 @@ export default function RoundModal(): JSX.Element {
         setTitle(modalMode[mode].title)
         setBody(modalMode[mode].body)
         setSuccess(modalMode[mode].success)
-    }, [mode])
+        let newPoints = 0
+        switch (mode) {
+            case "good":
+                newPoints = goodAnswer
+                break
+            case "wrong":
+                newPoints = wrongAnswer
+                break
+            case "timeout":
+                newPoints = timeout
+                break
+            default:
+                alert("Something went wrong")
+        }
+        setUpdatedPoints(newPoints)
+    }, [goodAnswer, mode, timeout, wrongAnswer])
+
+    const onNextRoundClick = () => {
+        dispatch(GameActionCreator.newRound(updatedPoints))
+        setOpen(false)
+    }
 
     return (
         <Modal
@@ -146,7 +172,7 @@ export default function RoundModal(): JSX.Element {
                         <Typography className={clsx(classes.points, {
                             [classes.success]: success,
                         })}>
-                            {points > 0? `+${points}`: points}
+                            {updatedPoints > 0 ? `+${updatedPoints}` : updatedPoints}
                             <Typography className={classes.pointLabel}>
                                 points
                             </Typography>
@@ -162,7 +188,7 @@ export default function RoundModal(): JSX.Element {
                         </Typography>
                     }
                     <div className={classes.footer}>
-                        <Button onClick={() => setOpen(false)} size="medium" className={classes.button}>
+                        <Button onClick={onNextRoundClick} size="medium" className={classes.button}>
                             Next question
                         </Button>
                     </div>
