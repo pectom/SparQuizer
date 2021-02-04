@@ -12,6 +12,9 @@ import {Card} from "../common/Card";
 import {BaseHumanProps, ExtendedHumanProps} from "../../query/humans";
 import {SparQLTypography} from "../common/SparQLTypography";
 import {Human, PropertyItem} from "../../state/AppModel";
+import {useDispatch} from "react-redux";
+import {useConfigContext} from "../../state/ConfigContext";
+import {GameActionCreator} from "../../state/GamActionCreator";
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
@@ -66,6 +69,8 @@ export default function HintCard({human}: HintCardProps) {
     const [hidden, setHidden] = React.useState(false);
     const [baseHumanProps, setBaseHumanProps] = React.useState<PropertyItem[]>([]);
     const [extendHumanProps, setExtendHumanProps] = React.useState<PropertyItem[]>([]);
+    const dispatch = useDispatch()
+    const {hintCost, additionalHintCost} = useConfigContext()
 
     useEffect(() => {
         if(human){
@@ -86,10 +91,12 @@ export default function HintCard({human}: HintCardProps) {
 
     const handleExpandClick = () => {
         setExpanded(!expanded);
+        dispatch(GameActionCreator.changePoint(additionalHintCost))
     };
 
     const handleCardClick = () => {
         setHidden(true);
+        dispatch(GameActionCreator.changePoint(hintCost))
     };
 
 

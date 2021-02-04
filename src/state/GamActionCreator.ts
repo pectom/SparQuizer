@@ -16,4 +16,12 @@ export class GameActionCreator{
         }
     }
 
+    static changePoint(points: number){
+        return {
+            type: AppActionType.CHANGE_POINTS,
+            payload: {
+                points
+            }
+        }
+    }
 }
