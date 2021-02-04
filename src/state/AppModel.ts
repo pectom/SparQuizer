@@ -10,6 +10,7 @@ export interface PropertyItem {
 
 export type Point = number
 export type Counter = number
+export type Code = string
 
 export interface Human {
     [key: string]: PropertyItem
@@ -22,6 +23,8 @@ export interface Question{
 }
 
 export interface AppModel{
+    humans: Code[],
     points: Point
     questionCounter: Counter
+    currentHuman: Code
 }

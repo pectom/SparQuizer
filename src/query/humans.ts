@@ -1,15 +1,14 @@
 import {useQuery} from "react-query";
 import {Wikidata} from "../api/wikidata";
-import {Human, QueryItem} from "../state/AppModel";
+import {Code, Human, QueryItem} from "../state/AppModel";
 
-const humansQuery = `
-        SELECT ?item ?itemLabel WHERE {
-          ?item wdt:P106 wd:Q2736.
-          ?item wdt:P18 ?img 
-          SERVICE wikibase:label { bd:serviceParam wikibase:language "[AUTO_LANGUAGE],nl". }
-        }
-        LIMIT 10
-        
+export const humansQuery = `
+    SELECT ?item WHERE {
+      ?item wdt:P106 wd:Q937857.
+      ?item wdt:P18 ?img.
+      ?item rdfs:label "Cristiano Ronaldo"@en
+    }
+    LIMIT 10
     `
 export const BaseHumanProps = {
     "img": "P18",
@@ -107,9 +106,8 @@ export function parseResponse(id: string, data: QueryResult): Human {
             let label = labels[index]
             let queryItem;
             if (link !== label) {
-                const code = link.split("/").slice(-1).pop()
                 queryItem = {
-                    code,
+                    code: getCodeFromURL(link),
                     label
                 }
             } else {
@@ -134,11 +132,11 @@ export function parseResponse(id: string, data: QueryResult): Human {
     return human
 }
 
-
-export function useAllHumansIds() {
-    return useQuery('humans', () =>
-        Wikidata.sendQuery(humansQuery)
-    )
+export async function getHumans(): Promise<Code[]>{
+    const humansQueryResults = await Wikidata.sendQuery(humansQuery)
+    return humansQueryResults.results.bindings.map((binding: {item: {value: string}}) => {
+        return getCodeFromURL(binding.item.value)
+    })
 }
 
 export function useHumanById(humanId: string) {
@@ -153,3 +151,6 @@ export function usePropertyInfo(propertyId: string){
     )
 }
 
+export function getCodeFromURL(url: string){
+    return url.split("/").slice(-1).pop()
+}
