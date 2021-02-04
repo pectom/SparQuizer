@@ -1,0 +1,9 @@
+{
+  "wrongAnswer": -10,
+  "goodAnswer": 40,
+  "timeout": 0,
+  "hintCost": -10,
+  "additionalHintCost": -5,
+  "questionNumber": 10,
+  "roundTime": 80
+}

@@ -7,20 +7,11 @@ export class GameActionCreator{
         }
     }
 
-    static goodAnswer(){
+    static newRound(points: number){
         return {
             type: AppActionType.NEW_ROUND,
             payload: {
-                points: 10
-            }
-        }
-    }
-
-    static wrongAnswer(){
-        return {
-            type: AppActionType.NEW_ROUND,
-            payload: {
-                points: -10
+                points
             }
         }
     }

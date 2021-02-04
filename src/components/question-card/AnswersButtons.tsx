@@ -3,6 +3,8 @@ import React from "react";
 import {createStyles, makeStyles, Theme} from "@material-ui/core/styles";
 import {SparQLTypography} from "../common/SparQLTypography";
 import {useModalContext} from "../ModalContexProvider";
+import {useDispatch} from "react-redux";
+import {GameActionCreator} from "../../state/GamActionCreator";
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
@@ -26,22 +28,26 @@ interface Answer {
 export default function AnswersButtons() {
     const classes = useStyles();
     const {setOpen, setMode, setAnswer, setPoints} = useModalContext()
+    const dispatch = useDispatch();
 
     const onClick = (isValidAnswer: boolean) => {
         setOpen(true)
+        let points;
         if (isValidAnswer) {
             setMode("good")
-            setPoints(10)
+            points = 10
         } else {
             setMode("wrong")
-            setPoints(-10)
+            points =  -10
         }
+        dispatch(GameActionCreator.newRound(points))
         setAnswer("good")
+        setPoints(points)
     }
 
     const answers: Answer[] = [
         {
-            label: "Kradzież",
+            label: "Tax",
             code: "Q12312",
             isValidAnswer: true
         },
@@ -67,7 +73,7 @@ export default function AnswersButtons() {
             {
                 answers.map(answer => {
                     return (
-                        <Button className={classes.button} onClick={() => onClick(answer.isValidAnswer)}>
+                        <Button className={classes.button} onClick={() => onClick(answer.isValidAnswer)} key={`${answer.label}_${answer.code}`}>
                             <SparQLTypography code={answer.code}>
                                 {answer.label}
                             </SparQLTypography>
