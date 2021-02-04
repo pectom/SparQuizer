@@ -11,9 +11,10 @@ import {Button, Divider, Typography} from "@material-ui/core";
 import {useModalContext} from "./ModalContexProvider";
 import {green, red} from "@material-ui/core/colors";
 import clsx from "clsx";
-import {useDispatch} from "react-redux";
+import {useDispatch, useSelector} from "react-redux";
 import {useConfigContext} from "../state/ConfigContext";
 import {GameActionCreator} from "../state/GamActionCreator";
+import {AppModel} from "../state/AppModel";
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
@@ -114,7 +115,8 @@ export default function RoundModal(): JSX.Element {
     const [success, setSuccess] = useState<boolean>(false);
     const [updatedPoints, setUpdatedPoints] = useState<number>(0);
     const dispatch = useDispatch();
-    const {wrongAnswer, goodAnswer, timeout} = useConfigContext()
+    const {questionNumber, wrongAnswer, goodAnswer, timeout} = useConfigContext()
+    const {questionCounter} = useSelector((state: AppModel) => state)
 
     const handleClose = (): void => {
         setOpen(false);
@@ -189,7 +191,7 @@ export default function RoundModal(): JSX.Element {
                     }
                     <div className={classes.footer}>
                         <Button onClick={onNextRoundClick} size="medium" className={classes.button}>
-                            Next question
+                            {questionCounter >= questionNumber ? "Finish!" : "Next question"}
                         </Button>
                     </div>
                 </div>

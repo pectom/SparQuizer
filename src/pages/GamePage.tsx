@@ -5,9 +5,12 @@ import QuestionCard from "../components/question-card/QuestionCard";
 import HintCard from "../components/hint-card/HintCard";
 import {createStyles, makeStyles, Theme} from "@material-ui/core/styles";
 import {parseResponse, useHumanById} from "../query/humans";
-import {Human} from "../state/AppModel";
+import {AppModel, Human} from "../state/AppModel";
 import RoundModal from "../components/RoundModal";
 import {ModalContextProvider} from "../components/ModalContexProvider";
+import {useSelector} from "react-redux";
+import {useConfigContext} from "../state/ConfigContext";
+import { useHistory } from "react-router-dom";
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
@@ -32,12 +35,22 @@ export default function GamePage() {
     const classes = useStyles();
 
     const {data, isFetching} = useHumanById(id)
+    const {questionCounter} = useSelector((state: AppModel) => state)
+    const {questionNumber} = useConfigContext()
+    const history = useHistory()
 
     useEffect(() => {
         if (data) {
             setHuman(parseResponse(id, data.results.bindings[0]))
         }
     }, [data])
+
+
+    useEffect(() => {
+        if (questionCounter > questionNumber) {
+            history.push("finish")
+        }
+    }, [history, questionCounter, questionNumber])
 
     return (
         <ModalContextProvider>

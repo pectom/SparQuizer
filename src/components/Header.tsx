@@ -60,7 +60,6 @@ export default function Header() {
         return () => clearTimeout(timer);
     });
 
-
     useEffect(() => {
         if(timeLeft <= 0){
             setOpen(true)
