@@ -5,6 +5,7 @@ import {SparQLTypography} from "../common/SparQLTypography";
 import {useModalContext} from "../ModalContexProvider";
 import {useDispatch} from "react-redux";
 import {GameActionCreator} from "../../state/GamActionCreator";
+import {useConfigContext} from "../../state/ConfigContext";
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
@@ -29,16 +30,17 @@ export default function AnswersButtons() {
     const classes = useStyles();
     const {setOpen, setMode, setAnswer, setPoints} = useModalContext()
     const dispatch = useDispatch();
+    const {goodAnswer, wrongAnswer} = useConfigContext()
 
     const onClick = (isValidAnswer: boolean) => {
         setOpen(true)
         let points;
         if (isValidAnswer) {
             setMode("good")
-            points = 10
+            points = goodAnswer
         } else {
             setMode("wrong")
-            points =  -10
+            points =  wrongAnswer
         }
         dispatch(GameActionCreator.newRound(points))
         setAnswer("good")

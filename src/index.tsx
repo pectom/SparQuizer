@@ -7,18 +7,21 @@ import {BrowserRouter} from "react-router-dom";
 import {ReactQueryDevtools} from 'react-query/devtools'
 import {QueryClient, QueryClientProvider} from "react-query";
 import {Provider} from "react-redux";
-import { appStore } from "./state/AppStore";
+import {appStore} from "./state/AppStore";
+import {ConfigContextProvider} from "./state/ConfigContext";
 
 const queryClient = new QueryClient()
 
 ReactDOM.render(
     <QueryClientProvider client={queryClient}>
         <Provider store={appStore}>
-            <BrowserRouter>
-                <React.StrictMode>
-                    <App/>
-                </React.StrictMode>
-            </BrowserRouter>
+            <ConfigContextProvider>
+                <BrowserRouter>
+                    <React.StrictMode>
+                        <App/>
+                    </React.StrictMode>
+                </BrowserRouter>
+            </ConfigContextProvider>
         </Provider>
         <ReactQueryDevtools initialIsOpen={false}/>
     </QueryClientProvider>,
