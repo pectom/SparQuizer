@@ -26,5 +26,5 @@ export interface AppModel{
     humans: Code[],
     points: Point
     questionCounter: Counter
-    currentHuman: Code
+    currentHuman?: Human
 }

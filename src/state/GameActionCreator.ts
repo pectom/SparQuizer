@@ -1,6 +1,6 @@
 import {ActionModel, AppActionType} from "./AppReducer";
 import {ThunkDispatch} from "redux-thunk";
-import {getHumans} from "../query/humans";
+import {getHumanById, getHumans} from "../query/humans";
 import {AppModel} from "./AppModel";
 import _ from "lodash";
 
@@ -22,18 +22,19 @@ export class GameActionCreator {
                     }
                 }
             )
-            this.newRound(0)
+            dispatch(this.newRound(0))
         }
     }
 
     static newRound(points: number): ThunkFunction<Pick<AppModel, "points" | "currentHuman">> {
         return async (dispatch, getState): Promise<void> => {
             const {humans} = getState()
+            const human = await getHumanById(_.sample(humans) || "")
             dispatch({
                     type: AppActionType.NEW_ROUND,
                     payload: {
                         points,
-                        currentHuman: _.sample(humans) || ""
+                        currentHuman: human
                     }
                 }
             )

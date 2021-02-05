@@ -11,10 +11,10 @@ import PropertyList from "./PropertyList";
 import {Card} from "../common/Card";
 import {BaseHumanProps, ExtendedHumanProps} from "../../query/humans";
 import {SparQLTypography} from "../common/SparQLTypography";
-import {Human, PropertyItem} from "../../state/AppModel";
-import {useDispatch} from "react-redux";
+import {AppModel, PropertyItem} from "../../state/AppModel";
+import {useDispatch, useSelector} from "react-redux";
 import {useConfigContext} from "../../state/ConfigContext";
-import {GameActionCreator} from "../../state/GamActionCreator";
+import {GameActionCreator} from "../../state/GameActionCreator";
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
@@ -59,11 +59,7 @@ const useStyles = makeStyles((theme: Theme) =>
     }),
 );
 
-interface HintCardProps {
-    human?: Human
-}
-
-export default function HintCard({human}: HintCardProps) {
+export default function HintCard() {
     const classes = useStyles();
     const [expanded, setExpanded] = React.useState(false);
     const [hidden, setHidden] = React.useState(false);
@@ -71,23 +67,24 @@ export default function HintCard({human}: HintCardProps) {
     const [extendHumanProps, setExtendHumanProps] = React.useState<PropertyItem[]>([]);
     const dispatch = useDispatch()
     const {hintCost, additionalHintCost} = useConfigContext()
+    const { currentHuman } = useSelector((state: AppModel) => state)
 
     useEffect(() => {
-        if(human){
+        if(currentHuman){
             const base: PropertyItem[] = []
             const extend: PropertyItem[] = []
             Object.keys(BaseHumanProps).forEach(key => {
                 if(key !== "img"){
-                    base.push(human[key])
+                    base.push(currentHuman[key])
                 }
             })
             Object.keys(ExtendedHumanProps).forEach(key => {
-                extend.push(human[key])
+                extend.push(currentHuman[key])
             })
             setBaseHumanProps(base)
             setExtendHumanProps(extend)
         }
-    }, [human])
+    }, [currentHuman])
 
     const handleExpandClick = () => {
         setExpanded(!expanded);
@@ -102,11 +99,11 @@ export default function HintCard({human}: HintCardProps) {
 
     return (
         <Card className={classes.card}>
-            {hidden && human ?
+            {hidden && currentHuman ?
                 <>
                     <CardContent className={classes.content}>
-                        <SparQLTypography variant="h4" color="textPrimary" className={classes.name} code={human.name.values[0].code}>
-                            {human.name.values[0].label}
+                        <SparQLTypography variant="h4" color="textPrimary" className={classes.name} code={currentHuman.name.values[0].code}>
+                            {currentHuman.name.values[0].label}
                         </SparQLTypography>
                         <Grid container>
                             <Grid item xs={6}>
@@ -114,7 +111,7 @@ export default function HintCard({human}: HintCardProps) {
                             </Grid>
                             <Grid item xs={6}>
                                 <Image
-                                    src={human.img.values[0].label}
+                                    src={currentHuman.img.values[0].label}
                                     disableSpinner
                                     className={classes.image}
                                     animationDuration={100}

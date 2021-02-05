@@ -1,16 +1,15 @@
-import React, {useEffect, useState} from "react";
+import React, {useEffect} from "react";
 import Grid from "@material-ui/core/Grid";
 import Header from "../components/Header";
 import QuestionCard from "../components/question-card/QuestionCard";
-import HintCard from "../components/hint-card/HintCard";
 import {createStyles, makeStyles, Theme} from "@material-ui/core/styles";
-import {parseResponse, useHumanById} from "../query/humans";
-import {AppModel, Human} from "../state/AppModel";
+import {AppModel} from "../state/AppModel";
 import RoundModal from "../components/RoundModal";
 import {ModalContextProvider} from "../components/ModalContexProvider";
 import {useSelector} from "react-redux";
 import {useConfigContext} from "../state/ConfigContext";
-import { useHistory } from "react-router-dom";
+import {useHistory} from "react-router-dom";
+import HintCard from "../components/hint-card/HintCard";
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
@@ -30,21 +29,11 @@ const useStyles = makeStyles((theme: Theme) =>
 );
 
 export default function GamePage() {
-    const [human, setHuman] = useState<Human | undefined>(undefined)
-    const id = "Q11571"
     const classes = useStyles();
 
-    const {data, isFetching} = useHumanById(id)
-    const {questionCounter} = useSelector((state: AppModel) => state)
+    const {questionCounter, currentHuman} = useSelector((state: AppModel) => state)
     const {questionNumber} = useConfigContext()
     const history = useHistory()
-
-    useEffect(() => {
-        if (data) {
-            setHuman(parseResponse(id, data.results.bindings[0]))
-        }
-    }, [data])
-
 
     useEffect(() => {
         if (questionCounter > questionNumber) {
@@ -56,19 +45,19 @@ export default function GamePage() {
         <ModalContextProvider>
             <Grid container alignItems="center" justify="center" spacing={1} className={classes.root}>
                 <Header/>
-                <Grid container spacing={3}>
-                    <Grid item xs={8}>
-                        {
-                            !isFetching && human &&
+                {
+                    currentHuman &&
+                    <Grid container spacing={3}>
+                        <Grid item xs={8}>
                             <QuestionCard propertyId={"P1399"}
-                                          title={human.name.values[0]}
-                                          answer={human.convicted.values[0]}/>
-                        }
+                                          title={currentHuman.name.values[0]}
+                                          answer={currentHuman.convicted.values[0]}/>
+                        </Grid>
+                        <Grid item xs={4}>
+                            <HintCard/>
+                        </Grid>
                     </Grid>
-                    <Grid item xs={4}>
-                        <HintCard human={human}/>
-                    </Grid>
-                </Grid>
+                }
                 <RoundModal/>
             </Grid>
         </ModalContextProvider>

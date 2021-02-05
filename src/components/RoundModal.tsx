@@ -13,7 +13,7 @@ import {green, red} from "@material-ui/core/colors";
 import clsx from "clsx";
 import {useDispatch, useSelector} from "react-redux";
 import {useConfigContext} from "../state/ConfigContext";
-import {GameActionCreator} from "../state/GamActionCreator";
+import {GameActionCreator} from "../state/GameActionCreator";
 import {AppModel} from "../state/AppModel";
 
 const useStyles = makeStyles((theme: Theme) =>

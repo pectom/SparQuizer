@@ -139,10 +139,9 @@ export async function getHumans(): Promise<Code[]>{
     })
 }
 
-export function useHumanById(humanId: string) {
-    return useQuery(humanId && ['human', humanId], () =>
-        Wikidata.sendQuery(humanInfoQuery(humanId))
-    )
+export async function getHumanById(humanId: string): Promise<Human>{
+    const humansIdQueryResults = await Wikidata.sendQuery(humanInfoQuery(humanId))
+    return parseResponse(humanId, humansIdQueryResults.results.bindings[0])
 }
 
 export function usePropertyInfo(propertyId: string){
