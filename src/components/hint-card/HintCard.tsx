@@ -73,12 +73,12 @@ export default function HintCard() {
         if(currentHuman){
             const base: PropertyItem[] = []
             const extend: PropertyItem[] = []
-            Object.keys(BaseHumanProps).forEach(key => {
+            Object.values(BaseHumanProps).forEach(key => {
                 if(key !== "img"){
                     base.push(currentHuman[key])
                 }
             })
-            Object.keys(ExtendedHumanProps).forEach(key => {
+            Object.values(ExtendedHumanProps).forEach(key => {
                 extend.push(currentHuman[key])
             })
             setBaseHumanProps(base)

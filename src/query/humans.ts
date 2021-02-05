@@ -8,19 +8,26 @@ export const humansQuery = `
       ?item wdt:P18 ?img.
       ?item rdfs:label "Cristiano Ronaldo"@en
     }
-    LIMIT 10
     `
+
+const allHumanProps = (id: string) => `
+    SELECT ?property WHERE {
+          wd:${id} ?property ?val.
+         ?property rdf:type ?Type. 
+    }Limit 500
+`
+
 export const BaseHumanProps = {
-    "img": "P18",
-    "country": "P27",
-    "dateOfBirth": "P569",
-    "occupation": "P106",
+     "P18": "img",
+     "P27": "country",
+     "P569": "dateOfBirth",
+     "P106": "occupation",
 }
 export const ExtendedHumanProps = {
-    "numberOfChildren": "P1971",
-    "pseudonym": "P742",
-    "awards": "P166",
-    "convicted": "P1399",
+    "P1971": "numberOfChildren",
+    "P742": "pseudonym",
+    "P166": "awards",
+    "P1399": "convicted",
 }
 
 const HumanProperties = {
@@ -36,17 +43,17 @@ const propertyWithLabel = (name: string): string => {
     return `${headerName(name)} ${headerName(`${name}Label`)}`
 }
 const queryCreator = (id: string) => {
-    const headers = Object.keys(HumanProperties).reduce((previousValue, currentValue) => {
+    const headers = Object.values(HumanProperties).reduce((previousValue, currentValue) => {
         return `${previousValue} ${propertyWithLabel(currentValue)}`
     }, "?name ")
 
     const properties = Object.entries(HumanProperties).reduce((previousValue, currentValue) => {
-        return `${previousValue} wd:${id} wdt:${currentValue[1]} ?${currentValue[0]}.`
+        return `${previousValue} wd:${id} wdt:${currentValue[0]} ?${currentValue[1]}.`
     }, "")
 
     const groupBy = "?name "
 
-    const labels = Object.keys(HumanProperties).reduce((previousValue, currentValue) => {
+    const labels = Object.values(HumanProperties).reduce((previousValue, currentValue) => {
         return `${previousValue} ?${currentValue} rdfs:label ?${currentValue}Label.`
     }, `wd:${id} rdfs:label ?name.`)
 
@@ -99,8 +106,8 @@ export function parseResponse(id: string, data: QueryResult): Human {
         }
     }
     Object.entries(HumanProperties).forEach(propItem => {
-        const codes = data[propItem[0]].value.slice(1, data[propItem[0]].value.length - 1).split(",") as string[]
-        const labels = data[`${propItem[0]}Label`].value.slice(1, data[`${propItem[0]}Label`].value.length - 1).split(",") as string[]
+        const codes = data[propItem[1]].value.slice(1, data[propItem[1]].value.length - 1).split(",") as string[]
+        const labels = data[`${propItem[1]}Label`].value.slice(1, data[`${propItem[1]}Label`].value.length - 1).split(",") as string[]
         const humanValue: QueryItem[] = []
         codes.forEach((link, index) => {
             let label = labels[index]
@@ -111,7 +118,7 @@ export function parseResponse(id: string, data: QueryResult): Human {
                     label
                 }
             } else {
-                if(propItem[0].includes("date")){
+                if(propItem[1].includes("date")){
                     label = new Date(label).toISOString().slice(0,10);
                 }
                 queryItem = {
@@ -120,10 +127,10 @@ export function parseResponse(id: string, data: QueryResult): Human {
             }
             humanValue.push(queryItem)
         })
-        human[propItem[0]] = {
+        human[propItem[1]] = {
             property: {
-                code: propItem[1],
-                label: propItem[0]
+                code: propItem[0],
+                label: propItem[1]
             },
             values: humanValue
         }
@@ -134,22 +141,30 @@ export function parseResponse(id: string, data: QueryResult): Human {
 
 export async function getHumans(): Promise<Code[]>{
     const humansQueryResults = await Wikidata.sendQuery(humansQuery)
-    return humansQueryResults.results.bindings.map((binding: {item: {value: string}}) => {
+    return humansQueryResults.results.bindings.map((binding: { item: { value: string } }) => {
         return getCodeFromURL(binding.item.value)
     })
 }
 
-export async function getHumanById(humanId: string): Promise<Human>{
+export async function getHumanById(humanId: string): Promise<Human> {
     const humansIdQueryResults = await Wikidata.sendQuery(humanInfoQuery(humanId))
     return parseResponse(humanId, humansIdQueryResults.results.bindings[0])
 }
 
-export function usePropertyInfo(propertyId: string){
+export async function getAllHumanPropsById(humanId: string): Promise<Set<string>> {
+    const allPropsResult = await Wikidata.sendQuery(allHumanProps(humanId))
+    const allProps: string[] = allPropsResult.results.bindings.map((binding: { property: { value: string } }) => {
+        return getCodeFromURL(binding.property.value)
+    })
+    return new Set(allProps)
+}
+
+export function usePropertyInfo(propertyId: string) {
     return useQuery(propertyId && ['property', propertyId], () =>
         Wikidata.sendQuery(propertyInfoQuery(propertyId))
     )
 }
 
-export function getCodeFromURL(url: string){
+export function getCodeFromURL(url: string) {
     return url.split("/").slice(-1).pop()
 }
