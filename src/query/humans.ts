@@ -1,6 +1,5 @@
-import {useQuery} from "react-query";
 import {Wikidata} from "../api/wikidata";
-import {Code, Human, QueryItem} from "../state/AppModel";
+import {Code, Human, QueryItem, Question} from "../state/AppModel";
 
 export const humansQuery = `
     SELECT ?item WHERE {
@@ -17,22 +16,27 @@ const allHumanProps = (id: string) => `
     }Limit 500
 `
 
-export const BaseHumanProps = {
-     "P18": "img",
-     "P27": "country",
-     "P569": "dateOfBirth",
-     "P106": "occupation",
-}
-export const ExtendedHumanProps = {
-    "P1971": "numberOfChildren",
-    "P742": "pseudonym",
-    "P166": "awards",
-    "P1399": "convicted",
-}
+export const BaseHumanProps = [
+    "P18", //"img",
+    "P27", //"country",
+    "P569",  //"dateOfBirth",
+    "P106",  //"occupation",
+]
 
-const HumanProperties = {
-    ...BaseHumanProps,
-    ...ExtendedHumanProps
+export const ExtendedHumanProps = [
+    "P1971",  //"numberOfChildren",
+    "P742", //"pseudonym",
+    "P166", //"awards",
+    "P1399",  //"convicted",
+]
+
+export function getFunctionProp(allProps: Code[]) {
+    for (var i = 0; i < allProps.length; i++) {
+        if (ExtendedHumanProps.includes(allProps[i])) {
+            return allProps[i]
+        }
+    }
+    return allProps[0]
 }
 
 const headerName = (name: string): string => {
@@ -40,21 +44,24 @@ const headerName = (name: string): string => {
 }
 
 const propertyWithLabel = (name: string): string => {
-    return `${headerName(name)} ${headerName(`${name}Label`)}`
+    return `${headerName(name)} ${headerName(`${name}Label`)} ${headerName(`${name}Value`)}`
 }
-const queryCreator = (id: string) => {
-    const headers = Object.values(HumanProperties).reduce((previousValue, currentValue) => {
+
+const queryCreator = (id: string, props: Code[]) => {
+    const headers = props.reduce((previousValue, currentValue) => {
         return `${previousValue} ${propertyWithLabel(currentValue)}`
     }, "?name ")
 
-    const properties = Object.entries(HumanProperties).reduce((previousValue, currentValue) => {
-        return `${previousValue} wd:${id} wdt:${currentValue[0]} ?${currentValue[1]}.`
+    const properties = props.reduce((previousValue, currentValue) => {
+        return `${previousValue} wd:${id} wdt:${currentValue} ?${currentValue}.`
     }, "")
 
     const groupBy = "?name "
 
-    const labels = Object.values(HumanProperties).reduce((previousValue, currentValue) => {
-        return `${previousValue} ?${currentValue} rdfs:label ?${currentValue}Label.`
+    const labels = props.reduce((previousValue, currentValue) => {
+        const label = `wd:${currentValue} rdfs:label ?${currentValue}Label.`
+        const value = `?${currentValue} rdfs:label ?${currentValue}Value.`
+        return `${previousValue} ${label} ${value}`
     }, `wd:${id} rdfs:label ?name.`)
 
     return (
@@ -70,7 +77,7 @@ const queryCreator = (id: string) => {
     )
 }
 
-const humanInfoQuery = (id: string) => queryCreator(id)
+const humanInfoQuery = (id: string, props: Code[]) => queryCreator(id, props)
 
 const propertyInfoQuery = (id: string) =>
     `
@@ -90,7 +97,7 @@ export interface QueryResult {
     }
 }
 
-export function parseResponse(id: string, data: QueryResult): Human {
+export function parseResponse(id: string, data: QueryResult, props: Code[]): Human {
     let human: Human = {
         "name": {
             property: {
@@ -105,37 +112,38 @@ export function parseResponse(id: string, data: QueryResult): Human {
             ]
         }
     }
-    Object.entries(HumanProperties).forEach(propItem => {
-        const codes = data[propItem[1]].value.slice(1, data[propItem[1]].value.length - 1).split(",") as string[]
-        const labels = data[`${propItem[1]}Label`].value.slice(1, data[`${propItem[1]}Label`].value.length - 1).split(",") as string[]
+    props.forEach(propItem => {
+        const codes = data[`${propItem}`].value.slice(1, data[`${propItem}`].value.length - 1).split(",") as string[]
+        const values = data[`${propItem}Value`].value.slice(1, data[`${propItem}Value`].value.length - 1).split(",") as string[]
+        const label = (data[`${propItem}Label`].value.slice(1, data[`${propItem}Label`].value.length - 1).split(",") as string[])[0]
         const humanValue: QueryItem[] = []
         codes.forEach((link, index) => {
-            let label = labels[index]
+            let valueLabel = values[index]
             let queryItem;
-            if (link !== label) {
+            if (link !== valueLabel) {
                 queryItem = {
                     code: getCodeFromURL(link),
-                    label
+                    label: valueLabel
                 }
             } else {
-                if(propItem[1].includes("date")){
-                    label = new Date(label).toISOString().slice(0,10);
+                if (`${propItem}Value`.includes("date")) {
+                    valueLabel = new Date(valueLabel).toISOString().slice(0, 10);
                 }
                 queryItem = {
-                    label
+                    label: valueLabel
                 }
             }
             humanValue.push(queryItem)
         })
-        human[propItem[1]] = {
+        human[propItem] = {
             property: {
-                code: propItem[0],
-                label: propItem[1]
+                code: propItem,
+                label: label
             },
             values: humanValue
         }
     })
-
+    debugger
     return human
 }
 
@@ -146,23 +154,28 @@ export async function getHumans(): Promise<Code[]>{
     })
 }
 
-export async function getHumanById(humanId: string): Promise<Human> {
-    const humansIdQueryResults = await Wikidata.sendQuery(humanInfoQuery(humanId))
-    return parseResponse(humanId, humansIdQueryResults.results.bindings[0])
+export async function getHumanById(humanId: string, props: Code[]): Promise<Human> {
+    const humansIdQueryResults = await Wikidata.sendQuery(humanInfoQuery(humanId, props))
+    return parseResponse(humanId, humansIdQueryResults.results.bindings[0], props)
 }
 
-export async function getAllHumanPropsById(humanId: string): Promise<Set<string>> {
+export async function getAllHumanPropsById(humanId: string): Promise<Code[]> {
     const allPropsResult = await Wikidata.sendQuery(allHumanProps(humanId))
     const allProps: string[] = allPropsResult.results.bindings.map((binding: { property: { value: string } }) => {
         return getCodeFromURL(binding.property.value)
     })
-    return new Set(allProps)
+    const uniqueProps = new Set(allProps)
+    return Array.from(uniqueProps)
 }
 
-export function usePropertyInfo(propertyId: string) {
-    return useQuery(propertyId && ['property', propertyId], () =>
-        Wikidata.sendQuery(propertyInfoQuery(propertyId))
-    )
+export async function getPropertyInfo(propertyId: string): Promise<Question> {
+    const propertyInfoResult = await Wikidata.sendQuery(propertyInfoQuery(propertyId))
+    const {description, label} = propertyInfoResult.results.bindings[0]
+    return {
+        code: propertyId,
+        description: description.value,
+        label: label.value,
+    }
 }
 
 export function getCodeFromURL(url: string) {

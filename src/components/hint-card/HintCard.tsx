@@ -9,7 +9,7 @@ import Image from 'material-ui-image';
 import {Button, Grid} from "@material-ui/core";
 import PropertyList from "./PropertyList";
 import {Card} from "../common/Card";
-import {BaseHumanProps, ExtendedHumanProps} from "../../query/humans";
+import {BaseHumanProps} from "../../query/humans";
 import {SparQLTypography} from "../common/SparQLTypography";
 import {AppModel, PropertyItem} from "../../state/AppModel";
 import {useDispatch, useSelector} from "react-redux";
@@ -73,14 +73,17 @@ export default function HintCard() {
         if(currentHuman){
             const base: PropertyItem[] = []
             const extend: PropertyItem[] = []
-            Object.values(BaseHumanProps).forEach(key => {
-                if(key !== "img"){
-                    base.push(currentHuman[key])
+            Object.keys(currentHuman).forEach(key => {
+                if(key !== "P18"){
+                    if(BaseHumanProps.includes(key)){
+                        base.push(currentHuman[key])
+                    }else{
+                        extend.push(currentHuman[key])
+
+                    }
                 }
             })
-            Object.values(ExtendedHumanProps).forEach(key => {
-                extend.push(currentHuman[key])
-            })
+            debugger
             setBaseHumanProps(base)
             setExtendHumanProps(extend)
         }
@@ -111,7 +114,7 @@ export default function HintCard() {
                             </Grid>
                             <Grid item xs={6}>
                                 <Image
-                                    src={currentHuman.img.values[0].label}
+                                    src={currentHuman["P18"].values[0].label}
                                     disableSpinner
                                     className={classes.image}
                                     animationDuration={100}

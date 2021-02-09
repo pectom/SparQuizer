@@ -49,9 +49,7 @@ export default function GamePage() {
                     currentHuman &&
                     <Grid container spacing={3}>
                         <Grid item xs={8}>
-                            <QuestionCard propertyId={"P1399"}
-                                          title={currentHuman.name.values[0]}
-                                          answer={currentHuman.convicted.values[0]}/>
+                            <QuestionCard/>
                         </Grid>
                         <Grid item xs={4}>
                             <HintCard/>

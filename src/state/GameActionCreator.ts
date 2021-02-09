@@ -1,6 +1,13 @@
 import {ActionModel, AppActionType} from "./AppReducer";
 import {ThunkDispatch} from "redux-thunk";
-import {getAllHumanPropsById, getHumanById, getHumans} from "../query/humans";
+import {
+    BaseHumanProps,
+    getAllHumanPropsById,
+    getFunctionProp,
+    getHumanById,
+    getHumans,
+    getPropertyInfo
+} from "../query/humans";
 import {AppModel} from "./AppModel";
 import _ from "lodash";
 
@@ -8,6 +15,7 @@ export type ThunkFunction<T> = (
     dispatch: ThunkDispatch<AppModel, void, ActionModel<T>>,
     getState: () => AppModel
 ) => Promise<unknown> | unknown;
+
 
 export class GameActionCreator {
     static newGame(): ThunkFunction<Pick<AppModel, "humans">> {
@@ -30,13 +38,27 @@ export class GameActionCreator {
         return async (dispatch, getState): Promise<void> => {
             const {humans} = getState()
             const human = _.sample(humans) || ""
-            const allProps = await getAllHumanPropsById(human)
-            const currentHuman = await getHumanById(human)
+            const allProps = _.shuffle(await getAllHumanPropsById(human))
+
+            const selectedProps = allProps.slice(1, 10)
+
+            const questionProp = getFunctionProp(allProps)
+
+            const props = new Set([
+                ...BaseHumanProps,
+                questionProp,
+                ...selectedProps,
+            ])
+            const question = await getPropertyInfo(questionProp)
+
+            debugger
+            const currentHuman = await getHumanById(human, Array.from(props))
             dispatch({
                     type: AppActionType.NEW_ROUND,
                     payload: {
                         points,
-                        currentHuman
+                        currentHuman,
+                        question
                     }
                 }
             )

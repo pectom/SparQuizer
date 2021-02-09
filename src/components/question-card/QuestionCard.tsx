@@ -4,8 +4,7 @@ import {SparQLTypography} from "../common/SparQLTypography";
 import AnswersButtons from "./AnswersButtons";
 import {Card} from "../common/Card";
 import {createStyles, makeStyles, Theme} from "@material-ui/core/styles";
-import {usePropertyInfo} from "../../query/humans";
-import {AppModel, QueryItem} from "../../state/AppModel";
+import {AppModel} from "../../state/AppModel";
 import {Typography} from "@material-ui/core";
 import {useSelector} from "react-redux";
 import {useConfigContext} from "../../state/ConfigContext";
@@ -37,41 +36,39 @@ const useStyles = makeStyles((theme: Theme) =>
     }),
 );
 
-interface QuestionCardProps{
-    propertyId: string
-    title: QueryItem
-    answer: QueryItem
-}
 
-export default function QuestionCard({propertyId, title, answer}: QuestionCardProps) {
+
+export default function QuestionCard() {
     const classes = useStyles()
-    const { data: property, isFetching } = usePropertyInfo(`${propertyId}`)
-    const {questionCounter} = useSelector((state: AppModel) => state)
+    const {questionCounter, currentHuman, question} = useSelector((state: AppModel) => state)
     const {questionNumber} = useConfigContext()
 
     return (
     <Card className={classes.card}>
+        {
+            currentHuman &&
         <CardContent className={classes.cardContent} >
             <Typography className={classes.questionNumber} variant="h6">
                 Question: {questionCounter} / {questionNumber}
             </Typography>
             <div className={classes.content}>
-                <SparQLTypography variant="h3" color="textPrimary" code={title.code}>
-                    {title.label}
+                <SparQLTypography variant="h3" color="textPrimary" code={currentHuman.name.values[0].code}>
+                    {currentHuman.name.values[0].label}
                 </SparQLTypography>
-                { !isFetching &&
+                { question &&
                 <>
-                    <SparQLTypography variant="h5" color="textPrimary" code={propertyId} sparQLProperty={true}>
-                        {property?.results.bindings[0].label.value}
+                    <SparQLTypography variant="h5" color="textPrimary" code={question.code} sparQLProperty={true}>
+                        {question.label}
                     </SparQLTypography>
                     <SparQLTypography variant="h5" color="textPrimary">
-                        {property?.results.bindings[0].description.value}
+                        {question.description}
                     </SparQLTypography>
                 </>
                 }
                 <AnswersButtons/>
             </div>
         </CardContent>
+        }
     </Card>
 
     );

@@ -17,14 +17,15 @@ export interface Human {
 }
 
 export interface Question{
-    human: Human,
-    property: QueryItem,
+    code: Code,
+    label: string,
     description: string,
 }
 
 export interface AppModel{
     humans: Code[],
-    points: Point
-    questionCounter: Counter
-    currentHuman?: Human
+    points: Point,
+    questionCounter: Counter,
+    question: Question,
+    currentHuman?: Human,
 }
