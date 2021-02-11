@@ -102,9 +102,6 @@ const allHumanProps = (id: string) => `
     }Limit 500
 `
 
-
-
-
 export function getFunctionProp(allProps: Code[]): Code {
     for (let i = 0; i < allProps.length; i++) {
         if (ExtendedHumanProps.includes(allProps[i])) {

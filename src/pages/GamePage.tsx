@@ -1,11 +1,11 @@
 import React, {useEffect} from "react";
 import Grid from "@material-ui/core/Grid";
-import Header from "../components/Header";
+import Header from "../components/header/Header";
 import QuestionCard from "../components/question-card/QuestionCard";
 import {createStyles, makeStyles, Theme} from "@material-ui/core/styles";
 import {AppModel} from "../state/AppModel";
-import RoundModal from "../components/RoundModal";
-import {ModalContextProvider} from "../components/ModalContexProvider";
+import RoundModal from "../components/modal/RoundModal";
+import {ModalContextProvider} from "../components/modal/ModalContexProvider";
 import {useSelector} from "react-redux";
 import {useConfigContext} from "../state/ConfigContext";
 import {useHistory} from "react-router-dom";

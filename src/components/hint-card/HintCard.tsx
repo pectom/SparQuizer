@@ -15,7 +15,7 @@ import {AppModel, PropertyItem} from "../../state/AppModel";
 import {useDispatch, useSelector} from "react-redux";
 import {useConfigContext} from "../../state/ConfigContext";
 import {GameActionCreator} from "../../state/GameActionCreator";
-import {useModalContext} from "../ModalContexProvider";
+import {useModalContext} from "../modal/ModalContexProvider";
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({

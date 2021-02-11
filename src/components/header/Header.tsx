@@ -4,12 +4,12 @@ import {EmojiEvents, Timer} from "@material-ui/icons";
 import {Typography} from "@material-ui/core";
 import React, {useEffect, useState} from "react";
 import {createStyles, makeStyles, Theme} from "@material-ui/core/styles";
-import {Logo} from "./common/Logo";
+import {Logo} from "../common/Logo";
 import clsx from "clsx";
 import {useSelector} from "react-redux";
-import {AppModel} from "../state/AppModel";
-import {useConfigContext} from "../state/ConfigContext";
-import {useModalContext} from "./ModalContexProvider";
+import {AppModel} from "../../state/AppModel";
+import {useConfigContext} from "../../state/ConfigContext";
+import {useModalContext} from "../modal/ModalContexProvider";
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
@@ -36,14 +36,18 @@ const useStyles = makeStyles((theme: Theme) =>
 );
 export default function Header() {
     const classes = useStyles();
-    const {points, questionCounter} = useSelector((state: AppModel) => state)
+    const {points, questionCounter, isFetchingData} = useSelector((state: AppModel) => state)
     const {roundTime} = useConfigContext()
     const [startTime, setStartTime] = useState<number>(Date.now)
     const {setMode, setOpen} = useModalContext()
 
     const calculateTimeLeft = () :number => {
-        const time = Math.round((roundTime - (Date.now() - startTime)) / 1000)
-        return time < 0 ? 0 : time
+        if(!isFetchingData){
+            const time = Math.round((roundTime - (Date.now() - startTime)) / 1000)
+            return time < 0 ? 0 : time
+        }else{
+            return roundTime / 1000
+        }
     };
 
     const [timeLeft, setTimeLeft] = useState<number>(roundTime/1000);

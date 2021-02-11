@@ -2,7 +2,7 @@ import {Button} from "@material-ui/core";
 import React from "react";
 import {createStyles, makeStyles, Theme} from "@material-ui/core/styles";
 import {SparQLTypography} from "../common/SparQLTypography";
-import {useModalContext} from "../ModalContexProvider";
+import {useModalContext} from "../modal/ModalContexProvider";
 import {useSelector} from "react-redux";
 import {AppModel} from "../../state/AppModel";
 
