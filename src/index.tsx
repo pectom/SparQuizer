@@ -4,27 +4,21 @@ import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 import {BrowserRouter} from "react-router-dom";
-import {ReactQueryDevtools} from 'react-query/devtools'
-import {QueryClient, QueryClientProvider} from "react-query";
 import {Provider} from "react-redux";
 import {appStore} from "./state/AppStore";
 import {ConfigContextProvider} from "./state/ConfigContext";
 
-const queryClient = new QueryClient()
 
 ReactDOM.render(
-    <QueryClientProvider client={queryClient}>
-        <Provider store={appStore}>
-            <ConfigContextProvider>
-                <BrowserRouter>
-                    <React.StrictMode>
-                        <App/>
-                    </React.StrictMode>
-                </BrowserRouter>
-            </ConfigContextProvider>
-        </Provider>
-        <ReactQueryDevtools initialIsOpen={false}/>
-    </QueryClientProvider>,
+    <Provider store={appStore}>
+        <ConfigContextProvider>
+            <BrowserRouter>
+                <React.StrictMode>
+                    <App/>
+                </React.StrictMode>
+            </BrowserRouter>
+        </ConfigContextProvider>
+    </Provider>,
     document.getElementById('root')
 )
 ;

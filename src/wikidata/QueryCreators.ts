@@ -1,5 +1,5 @@
 import {Code} from "../state/AppModel";
-import {BaseHumanProps, HumansProfessions} from "./PropConfig";
+import {RequiredHumanProps, HumansProfessions} from "./PropConfig";
 
 export class QueryCreators {
     private static humanIdsLimit = 1000;
@@ -11,7 +11,7 @@ export class QueryCreators {
             return `${previousValue} wd:${currentValue}`
         }, "")
 
-        const props = BaseHumanProps.reduce((previousValue, currentValue) => {
+        const props = RequiredHumanProps.reduce((previousValue, currentValue) => {
             return `${previousValue} ?item wdt:${currentValue} ?${currentValue}.`
         }, "")
 

@@ -15,7 +15,7 @@ import {useDispatch, useSelector} from "react-redux";
 import {useConfigContext} from "../../state/ConfigContext";
 import {GameActionCreator} from "../../state/GameActionCreator";
 import {useModalContext} from "../modal/ModalContexProvider";
-import {BaseHumanProps} from "../../wikidata/PropConfig";
+import {RequiredHumanProps} from "../../wikidata/PropConfig";
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
@@ -78,7 +78,7 @@ export default function HintCard() {
             const extend: PropertyItem[] = []
             Object.keys(currentHuman).forEach(key => {
                 if(key !== "P18"){
-                    if(BaseHumanProps.includes(key)){
+                    if(RequiredHumanProps.includes(key)){
                         base.push(currentHuman[key])
                     }else{
                         extend.push(currentHuman[key])

@@ -1,6 +1,6 @@
 import {Code} from "../state/AppModel";
 
-export const BaseHumanProps = [
+export const RequiredHumanProps = [
     "P18", //"img",
     "P27", //"country",
     "P569",  //"dateOfBirth",
@@ -17,7 +17,7 @@ export const HumansProfessions: Code[] = [
     "Q3665646", //  basketball plater
 ]
 
-export const ExtendedHumanProps = [
+export const QuestionPreferredProps = [
     // all
     "P742", //"pseudonym",
     "P1399",  //"convicted",
@@ -47,4 +47,6 @@ export const ExtendedHumanProps = [
 
 export const FilteredProps: Code[] = [
     "P213", //  ISNI
+    "P735", // Given name
+    "P21" // Sex or gender
 ]

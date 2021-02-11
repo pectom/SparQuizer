@@ -1,27 +1,9 @@
 import {Axios} from "./Axios";
 import {Code, Human, QueryItem, Question} from "../state/AppModel";
-import {BaseHumanProps, ExtendedHumanProps, FilteredProps} from "./PropConfig";
-import {
-    QueryCreators
-} from "./QueryCreators";
+import {FilteredProps} from "./PropConfig";
+import {QueryCreators} from "./QueryCreators";
 import {parseHumanInfoResponse} from "./QueryReponseParsers";
-import _ from "lodash";
 
-
-export function selectQuestionProp(allProps: Code[]): Code {
-    const props = _.shuffle(allProps)
-    for (let i = 0; i < props.length; i++) {
-        if (ExtendedHumanProps.includes(props[i])) {
-            return props[i]
-        }
-    }
-    for (let i = 0; i < props.length; i++) {
-        if (!BaseHumanProps.includes(props[i])) {
-            return props[i]
-        }
-    }
-    return props[0]
-}
 
 export class Wikidata {
     static async getHumans(): Promise<Code[]>{
@@ -31,7 +13,7 @@ export class Wikidata {
         })
     }
 
-    static async getHumanById(humanId: string, props: Code[]): Promise<Human> {
+    static async getSelectedHumanInfo(humanId: string, props: Code[]): Promise<Human> {
         const humansIdQueryResults = await Axios.sendWikidataQuery(QueryCreators.specifiedHumanProps(humanId, props))
         return parseHumanInfoResponse(humanId, humansIdQueryResults.results.bindings[0], props)
     }
