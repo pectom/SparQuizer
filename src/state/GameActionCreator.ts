@@ -1,12 +1,7 @@
 import {ActionModel, AppActionType} from "./AppReducer";
 import {ThunkDispatch} from "redux-thunk";
 import {
-    getAndFilterHumanPropsById,
-    selectQuestionProp,
-    getHumanById,
-    getHumans,
-    getPropertyAnswers,
-    getPropertyInfo
+    selectQuestionProp, Wikidata,
 } from "../wikidata/WikidataApi";
 import {AppModel, Code} from "./AppModel";
 import _ from "lodash";
@@ -19,7 +14,7 @@ export type ThunkFunction<T> = (
 
 function removeInvalidProps(allProps: Code[], removedProps: Code[], questionProp: Code): Code[] {
     let filteredProps: Code[] = [];
-    allProps.forEach((prop, index) => {
+    allProps.forEach(prop => {
         if (!removedProps.includes(prop) && prop !== questionProp){
             filteredProps.push(prop)
         }
@@ -30,7 +25,7 @@ function removeInvalidProps(allProps: Code[], removedProps: Code[], questionProp
 export class GameActionCreator {
     static newGame(): ThunkFunction<Pick<AppModel, "humans">> {
         return async (dispatch): Promise<void> => {
-            const humans = await getHumans()
+            const humans = await Wikidata.getHumans()
             dispatch({
                 type: AppActionType.FETCHING_DATA,
                 isFetchingData: true
@@ -61,7 +56,7 @@ export class GameActionCreator {
 
             const {humans} = getState()
             const human = _.sample(humans) || ""
-            const allProps = _.shuffle(await getAndFilterHumanPropsById(human))
+            const allProps = _.shuffle(await Wikidata.getAndFilterHumanPropsById(human))
 
             const questionProp = selectQuestionProp(allProps)
             const selectedProps = removeInvalidProps(allProps, BaseHumanProps, questionProp).slice(0, 10)
@@ -71,15 +66,15 @@ export class GameActionCreator {
                 questionProp,
                 ...selectedProps,
             ])
-            const currentHuman = await getHumanById(human, Array.from(props))
+            const currentHuman = await Wikidata.getHumanById(human, Array.from(props))
 
             const correctAnswer = {
                 ...currentHuman[questionProp].values[0],
                 isValidAnswer: true
             }
 
-            const question = await getPropertyInfo(questionProp)
-            const answers = await getPropertyAnswers(questionProp)
+            const question = await Wikidata.getPropertyInfo(questionProp)
+            const answers = await Wikidata.getPropertyAnswers(questionProp)
             const answersSet = answers.filter(answer => {
                 return answer.label !==  correctAnswer.label
             })

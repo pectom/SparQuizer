@@ -1,52 +1,61 @@
 import {Code} from "../state/AppModel";
 import {BaseHumanProps, HumansProfessions} from "./PropConfig";
 
-export const humansIdsQueryCreator = (humansProfessions: Code[] = HumansProfessions, baseHumanProps: Code[] = BaseHumanProps) => {
-    const professions = humansProfessions.reduce((previousValue, currentValue) => {
-        return `${previousValue} wd:${currentValue}`
-    }, "")
+export class QueryCreators {
+    private static humanIdsLimit = 1000;
+    private static humanPropsLimit = 500;
+    private static answersLimit = 20;
 
-    const props = baseHumanProps.reduce((previousValue, currentValue) => {
-        return `${previousValue} ?item wdt:${currentValue} ?${currentValue}.`
-    }, "")
+    static humansIds() {
+        const professions = HumansProfessions.reduce((previousValue, currentValue) => {
+            return `${previousValue} wd:${currentValue}`
+        }, "")
 
-    return `
+        const props = BaseHumanProps.reduce((previousValue, currentValue) => {
+            return `${previousValue} ?item wdt:${currentValue} ?${currentValue}.`
+        }, "")
+
+        return `
     SELECT DISTINCT ?item WHERE {
       VALUES ?occupation {${professions}}.
       ${props}
-    }Limit 10
+    }Limit ${this.humanIdsLimit}
     `
-}
+    }
 
-export const propertyInfoQueryCreator = (id: string) =>
-    `
+    static propertyInfo(propId: Code) {
+        return (
+            `
         SELECT *
         WHERE {
              SERVICE wikibase:label { bd:serviceParam wikibase:language "en".
-                  wd:${id} rdfs:label         ?label.
-                  wd:${id} schema:description ?description.
+                  wd:${propId} rdfs:label         ?label.
+                  wd:${propId} schema:description ?description.
               }
         }
-    `
+    `)
+    }
 
-export const answersQueryCreator = (propCode: Code) => `
+    static questionAnswersPropositions(propCode: Code) {
+        return (`
     SELECT ?prop (COUNT(?prop) as ?count) WHERE {
         ?item wdt:${propCode} ?prop.
     }
     GROUP BY ?prop
     ORDER BY DESC(?count) 
-    LIMIT 10
-`
+    LIMIT ${this.answersLimit}
+    `)
+    }
 
-export const valuesLabelsQueryCreator = (valueCodes: Code[]) => {
-    const header = valueCodes.reduce((previousValue, currentValue) => {
-        return `${previousValue} ?${currentValue}`
-    }, "")
-    const labels = valueCodes.reduce((previousValue, currentValue) => {
-        return `${previousValue} wd:${currentValue} rdfs:label ?${currentValue}.`
-    }, "")
+    static valuesLabelsQueryCreator(valueCodes: Code[]) {
+        const header = valueCodes.reduce((previousValue, currentValue) => {
+            return `${previousValue} ?${currentValue}`
+        }, "")
+        const labels = valueCodes.reduce((previousValue, currentValue) => {
+            return `${previousValue} wd:${currentValue} rdfs:label ?${currentValue}.`
+        }, "")
 
-    return `   
+        return `   
     SELECT ${header} WHERE {
       SERVICE wikibase:label {
         bd:serviceParam wikibase:language "en".
@@ -54,41 +63,46 @@ export const valuesLabelsQueryCreator = (valueCodes: Code[]) => {
       }
     }
     `
-}
-export const allHumanPropsQueryCreator = (id: string) => `
+    }
+
+    static allHumanProps(id: Code) {
+        return `
     SELECT ?property WHERE {
           wd:${id} ?property ?val.
          ?property rdf:type ?Type. 
-    }Limit 500
-`
+    }
+    Limit ${this.humanPropsLimit}
+    `
+    }
 
-const headerName = (name: string): string => {
-    return `(concat('[',group_concat(distinct ?${name};separator=','),']') as ?${name})`
-}
+    private static headerName(name: string): string {
+        return `(concat('[',group_concat(distinct ?${name};separator=','),']') as ?${name})`
+    }
 
-const propertyWithLabel = (name: string): string => {
-    return `${headerName(name)} ${headerName(`${name}Label`)} ${headerName(`${name}Value`)}`
-}
 
-export const humanQueryCreator = (humanId: Code, props: Code[]) => {
-    const headers = props.reduce((previousValue, currentValue) => {
-        return `${previousValue} ${propertyWithLabel(currentValue)}`
-    }, "?name ")
+    private static propertyWithLabel(name: string): string {
+        return `${this.headerName(name)} ${this.headerName(`${name}Label`)} ${this.headerName(`${name}Value`)}`
+    }
 
-    const properties = props.reduce((previousValue, currentValue) => {
-        return `${previousValue} wd:${humanId} wdt:${currentValue} ?${currentValue}.`
-    }, "")
+    static specifiedHumanProps(humanId: Code, props: Code[]){
+        const headers = props.reduce((previousValue, currentValue) => {
+            return `${previousValue} ${this.propertyWithLabel(currentValue)}`
+        }, "?name ")
 
-    const groupBy = "?name "
+        const properties = props.reduce((previousValue, currentValue) => {
+            return `${previousValue} wd:${humanId} wdt:${currentValue} ?${currentValue}.`
+        }, "")
 
-    const labels = props.reduce((previousValue, currentValue) => {
-        const label = `wd:${currentValue} rdfs:label ?${currentValue}Label.`
-        const value = `?${currentValue} rdfs:label ?${currentValue}Value.`
-        return `${previousValue} ${label} ${value}`
-    }, `wd:${humanId} rdfs:label ?name.`)
+        const groupBy = "?name "
 
-    return (
-        `
+        const labels = props.reduce((previousValue, currentValue) => {
+            const label = `wd:${currentValue} rdfs:label ?${currentValue}Label.`
+            const value = `?${currentValue} rdfs:label ?${currentValue}Value.`
+            return `${previousValue} ${label} ${value}`
+        }, `wd:${humanId} rdfs:label ?name.`)
+
+        return (
+            `
         SELECT ${headers} WHERE {
         ${properties}
         SERVICE wikibase:label {
@@ -97,5 +111,6 @@ export const humanQueryCreator = (humanId: Code, props: Code[]) => {
         }
         } GROUP BY ${groupBy}
     `
-    )
+        )
+    }
 }
