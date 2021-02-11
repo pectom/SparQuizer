@@ -1,6 +1,7 @@
 import React from "react";
-import {Paper, PaperProps, Typography} from "@material-ui/core";
+import { Paper, PaperProps, Typography} from "@material-ui/core";
 import {createStyles, makeStyles, Theme} from "@material-ui/core/styles";
+import {Link} from "react-router-dom";
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
@@ -20,10 +21,13 @@ const useStyles = makeStyles((theme: Theme) =>
 export const Logo: React.FC<PaperProps> = (props) => {
     const classes = useStyles();
     return (
-        <Paper variant="outlined"  className={classes.logo} {...props}>
-            <Typography variant="h3" className={classes.spraquizer}>
-                SparQuizer
-            </Typography>
-        </Paper>
+        <Link to="/">
+            <Paper variant="outlined" className={classes.logo} {...props}>
+                    <Typography variant="h3" className={classes.spraquizer}>
+                        SparQuizer
+                    </Typography>
+            </Paper>
+        </Link>
+
     )
 }
