@@ -6,8 +6,6 @@ export interface MondalContextValues {
     setOpen: (open: boolean) => void;
     mode: ModalModeKeys,
     setMode: (mode: ModalModeKeys) => void,
-    answer: string,
-    setAnswer: (answer: string) => void
 }
 
 export const ModalContext = createContext<MondalContextValues | null>(null);
@@ -21,7 +19,6 @@ export const ModalContextProvider:
 
     const [open, setOpen] = useState<boolean>(false);
     const [mode, setMode] = useState<ModalModeKeys>("timeout");
-    const [answer, setAnswer] = useState<string>("");
 
     return (
         <ModalContext.Provider
@@ -30,8 +27,6 @@ export const ModalContextProvider:
                 setOpen,
                 mode,
                 setMode,
-                answer,
-                setAnswer,
             }}
         >
             {children}

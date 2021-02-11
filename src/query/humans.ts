@@ -18,58 +18,6 @@ const HumansProfessions: Code[] = [
     "Q3665646", //  basketball plater
 ]
 
-export const humansQuery = (humansProfessions: Code[] = HumansProfessions, baseHumanProps: Code[] = BaseHumanProps) => {
-    const professions = humansProfessions.reduce((previousValue, currentValue) => {
-        return `${previousValue} wd:${currentValue}`
-    }, "")
-
-    const props = baseHumanProps.reduce((previousValue, currentValue) => {
-        return `${previousValue} ?item wdt:${currentValue} ?${currentValue}.`
-    }, "")
-
-    return `
-    SELECT DISTINCT ?item WHERE {
-      VALUES ?occupation {${professions}}.
-      ${props}
-    }Limit 10
-    `
-}
-
-const answersQuery = (propCode: Code) => `
-    SELECT ?prop (COUNT(?prop) as ?count) WHERE {
-        ?item wdt:${propCode} ?prop.
-    }
-    GROUP BY ?prop
-    ORDER BY DESC(?count) 
-    LIMIT 10
-`
-
-const labelQuery = (propCode: Code, valueCodes: Code[]) => {
-    const header = valueCodes.reduce((previousValue, currentValue) => {
-        return `${previousValue} ?${currentValue}`
-    }, "")
-    const labels = valueCodes.reduce((previousValue, currentValue) => {
-        return`${previousValue} wd:${currentValue} rdfs:label ?${currentValue}.`
-    }, "")
-
-    return `   
-    SELECT ${header} WHERE {
-      SERVICE wikibase:label {
-        bd:serviceParam wikibase:language "en".
-        ${labels}
-      }
-    }
-    `
-}
-
-
-const allHumanProps = (id: string) => `
-    SELECT ?property WHERE {
-          wd:${id} ?property ?val.
-         ?property rdf:type ?Type. 
-    }Limit 500
-`
-
 export const ExtendedHumanProps = [
     // all
     "P742", //"pseudonym",
@@ -98,9 +46,73 @@ export const ExtendedHumanProps = [
     "P118" //league
 ]
 
+const FilteredProps: Code[] = [
+    "P213", //  ISNI
+]
+
+export const humansQuery = (humansProfessions: Code[] = HumansProfessions, baseHumanProps: Code[] = BaseHumanProps) => {
+    const professions = humansProfessions.reduce((previousValue, currentValue) => {
+        return `${previousValue} wd:${currentValue}`
+    }, "")
+
+    const props = baseHumanProps.reduce((previousValue, currentValue) => {
+        return `${previousValue} ?item wdt:${currentValue} ?${currentValue}.`
+    }, "")
+
+    return `
+    SELECT DISTINCT ?item WHERE {
+      VALUES ?occupation {${professions}}.
+      ${props}
+    }Limit 10
+    `
+}
+
+const answersQuery = (propCode: Code) => `
+    SELECT ?prop (COUNT(?prop) as ?count) WHERE {
+        ?item wdt:${propCode} ?prop.
+    }
+    GROUP BY ?prop
+    ORDER BY DESC(?count) 
+    LIMIT 10
+`
+
+const labelQuery = (valueCodes: Code[]) => {
+    const header = valueCodes.reduce((previousValue, currentValue) => {
+        return `${previousValue} ?${currentValue}`
+    }, "")
+    const labels = valueCodes.reduce((previousValue, currentValue) => {
+        return`${previousValue} wd:${currentValue} rdfs:label ?${currentValue}.`
+    }, "")
+
+    return `   
+    SELECT ${header} WHERE {
+      SERVICE wikibase:label {
+        bd:serviceParam wikibase:language "en".
+        ${labels}
+      }
+    }
+    `
+}
+
+
+const allHumanProps = (id: string) => `
+    SELECT ?property WHERE {
+          wd:${id} ?property ?val.
+         ?property rdf:type ?Type. 
+    }Limit 500
+`
+
+
+
+
 export function getFunctionProp(allProps: Code[]): Code {
     for (let i = 0; i < allProps.length; i++) {
         if (ExtendedHumanProps.includes(allProps[i])) {
+            return allProps[i]
+        }
+    }
+    for (let i = 0; i < allProps.length; i++) {
+        if (!BaseHumanProps.includes(allProps[i])) {
             return allProps[i]
         }
     }
@@ -226,18 +238,30 @@ export async function getHumanById(humanId: string, props: Code[]): Promise<Huma
     return parseResponse(humanId, humansIdQueryResults.results.bindings[0], props)
 }
 
-export async function getAllHumanPropsById(humanId: string): Promise<Code[]> {
+export async function getAndFilterHumanPropsById(humanId: string): Promise<Code[]> {
     const allPropsResult = await Wikidata.sendQuery(allHumanProps(humanId))
     const allProps: string[] = allPropsResult.results.bindings.map((binding: { property: { value: string } }) => {
         return getCodeFromURL(binding.property.value)
     })
     const uniqueProps = new Set(allProps)
-    return Array.from(uniqueProps)
+    const labelsQueryResult = await Wikidata.sendQuery(labelQuery(Array.from(uniqueProps)))
+    const query = labelsQueryResult.results.bindings[0]
+
+    const answers: Code[] = Object.keys(query).filter(key =>{
+        const label = query[key].value.toLowerCase()
+        const isNotIdProp = !label.includes("id")
+        const isNotFiltered = !FilteredProps.includes(key)
+        return isNotFiltered && isNotIdProp
+    })
+
+    debugger
+    return answers
 }
 
 export async function getPropertyInfo(propertyId: string): Promise<Question> {
     const propertyInfoResult = await Wikidata.sendQuery(propertyInfoQuery(propertyId))
     const {description, label} = propertyInfoResult.results.bindings[0]
+
     return {
         code: propertyId,
         description: description.value,
@@ -250,7 +274,7 @@ export async function getPropertyAnswers(propertyId: string) {
     const labels = propertyInfoResult.results.bindings.map((binding: { prop: { value: string; }; }) => {
         return getCodeFromURL(binding.prop.value)
     })
-    const labelsQueryResult = await Wikidata.sendQuery(labelQuery(propertyId, labels))
+    const labelsQueryResult = await Wikidata.sendQuery(labelQuery(labels))
     const query = labelsQueryResult.results.bindings[0]
 
     const answers: QueryItem[] = Object.keys(query).map(key =>{

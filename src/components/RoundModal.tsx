@@ -109,14 +109,15 @@ const modalMode: {[key: string]: ModalModeProps} = {
 
 export default function RoundModal(): JSX.Element {
     const classes = useStyles();
-    const {open, setOpen, mode, answer} = useModalContext();
+    const {open, setOpen, mode} = useModalContext();
     const [title, setTitle] = useState<string>("");
     const [body, setBody] = useState<string>("");
+    const [answer, setAnswer] = useState<string>("");
     const [success, setSuccess] = useState<boolean>(false);
     const [updatedPoints, setUpdatedPoints] = useState<number>(0);
     const dispatch = useDispatch();
     const {questionNumber, wrongAnswer, goodAnswer, timeout} = useConfigContext()
-    const {questionCounter} = useSelector((state: AppModel) => state)
+    const {questionCounter, answers} = useSelector((state: AppModel) => state)
 
     const handleClose = (): void => {
         setOpen(false);
@@ -126,6 +127,13 @@ export default function RoundModal(): JSX.Element {
         setTitle(modalMode[mode].title)
         setBody(modalMode[mode].body)
         setSuccess(modalMode[mode].success)
+        if(answers){
+            const validAnswer = answers.filter(answer => answer.isValidAnswer)
+            if(validAnswer[0]){
+                setAnswer(validAnswer[0].label)
+            }
+        }
+
         let newPoints = 0
         switch (mode) {
             case "good":
@@ -141,7 +149,7 @@ export default function RoundModal(): JSX.Element {
                 alert("Something went wrong")
         }
         setUpdatedPoints(newPoints)
-    }, [goodAnswer, mode, timeout, wrongAnswer])
+    }, [goodAnswer, mode, timeout, wrongAnswer, answers])
 
     const onNextRoundClick = () => {
         dispatch(GameActionCreator.newRound(updatedPoints))

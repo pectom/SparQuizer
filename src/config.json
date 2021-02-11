@@ -5,5 +5,5 @@
   "hintCost": -10,
   "additionalHintCost": -5,
   "questionNumber": 10,
-  "roundTime": 80000
+  "roundTime": 20000
 }

@@ -15,6 +15,7 @@ import {AppModel, PropertyItem} from "../../state/AppModel";
 import {useDispatch, useSelector} from "react-redux";
 import {useConfigContext} from "../../state/ConfigContext";
 import {GameActionCreator} from "../../state/GameActionCreator";
+import {useModalContext} from "../ModalContexProvider";
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
@@ -63,6 +64,7 @@ export default function HintCard() {
     const classes = useStyles();
     const [expanded, setExpanded] = React.useState(false);
     const [hidden, setHidden] = React.useState(false);
+    const {open} = useModalContext()
     const [baseHumanProps, setBaseHumanProps] = React.useState<PropertyItem[]>([]);
     const [extendHumanProps, setExtendHumanProps] = React.useState<PropertyItem[]>([]);
     const dispatch = useDispatch()
@@ -87,6 +89,12 @@ export default function HintCard() {
             setExtendHumanProps(extend)
         }
     }, [currentHuman])
+
+    useEffect(() => {
+        if(open) {
+            setHidden(true)
+        }
+    }, [open])
 
     const handleExpandClick = () => {
         setExpanded(!expanded);
@@ -145,7 +153,7 @@ export default function HintCard() {
                     <Typography variant="h4" className={classes.hintText}>
                         Take a hint (-10p)
                     </Typography>
-            </CardContent>
+                 </CardContent>
             }
         </Card>
     );

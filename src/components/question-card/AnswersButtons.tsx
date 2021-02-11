@@ -27,7 +27,7 @@ export interface Answer {
 
 export default function AnswersButtons() {
     const classes = useStyles();
-    const {setOpen, setMode, setAnswer} = useModalContext()
+    const {setOpen, setMode} = useModalContext()
     const { answers } = useSelector((state: AppModel) => state)
 
     const onClick = (isValidAnswer: boolean) => {
@@ -37,7 +37,6 @@ export default function AnswersButtons() {
         } else {
             setMode("wrong")
         }
-        setAnswer("good")
     }
     return (
         <div className={classes.container}>

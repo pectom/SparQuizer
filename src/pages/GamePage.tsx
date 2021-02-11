@@ -10,6 +10,7 @@ import {useSelector} from "react-redux";
 import {useConfigContext} from "../state/ConfigContext";
 import {useHistory} from "react-router-dom";
 import HintCard from "../components/hint-card/HintCard";
+import {CircularProgress} from "@material-ui/core";
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
@@ -31,7 +32,7 @@ const useStyles = makeStyles((theme: Theme) =>
 export default function GamePage() {
     const classes = useStyles();
 
-    const {questionCounter, currentHuman} = useSelector((state: AppModel) => state)
+    const {questionCounter, isFetchingData} = useSelector((state: AppModel) => state)
     const {questionNumber} = useConfigContext()
     const history = useHistory()
 
@@ -43,10 +44,11 @@ export default function GamePage() {
 
     return (
         <ModalContextProvider>
-            <Grid container alignItems="center" justify="center" spacing={1} className={classes.root}>
+            <Grid container justify="center" spacing={1} className={classes.root}>
                 <Header/>
-                {
-                    currentHuman &&
+                {isFetchingData ?
+                    <CircularProgress color="secondary"/>
+                    :
                     <Grid container spacing={3}>
                         <Grid item xs={8}>
                             <QuestionCard/>

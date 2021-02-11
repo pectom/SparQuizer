@@ -2,7 +2,7 @@ import {ActionModel, AppActionType} from "./AppReducer";
 import {ThunkDispatch} from "redux-thunk";
 import {
     BaseHumanProps,
-    getAllHumanPropsById,
+    getAndFilterHumanPropsById,
     getFunctionProp,
     getHumanById,
     getHumans,
@@ -16,8 +16,6 @@ export type ThunkFunction<T> = (
     dispatch: ThunkDispatch<AppModel, void, ActionModel<T>>,
     getState: () => AppModel
 ) => Promise<unknown> | unknown;
-
-
 
 function removeInvalidProps(allProps: Code[], removedProps: Code[], questionProp: Code): Code[] {
     let filteredProps: Code[] = [];
@@ -34,6 +32,11 @@ export class GameActionCreator {
         return async (dispatch): Promise<void> => {
             const humans = await getHumans()
             dispatch({
+                type: AppActionType.FETCHING_DATA,
+                isFetchingData: true
+            })
+
+            dispatch({
                     type: AppActionType.NEW_GAME,
                     payload: {
                         points: 0,
@@ -46,11 +49,19 @@ export class GameActionCreator {
         }
     }
 
-    static newRound(points: number): ThunkFunction<Pick<AppModel, "points" | "currentHuman">> {
+    static newRound(points: number): ThunkFunction<Pick<AppModel, "isFetchingData">> {
         return async (dispatch, getState): Promise<void> => {
+            dispatch({
+                    type: AppActionType.FETCHING_DATA,
+                    payload: {
+                        isFetchingData: true
+                    }
+                }
+            )
+
             const {humans} = getState()
             const human = _.sample(humans) || ""
-            const allProps = _.shuffle(await getAllHumanPropsById(human))
+            const allProps = _.shuffle(await getAndFilterHumanPropsById(human))
 
             const questionProp = getFunctionProp(allProps)
             const selectedProps = removeInvalidProps(allProps, BaseHumanProps, questionProp).slice(0, 10)
@@ -76,13 +87,15 @@ export class GameActionCreator {
             const finalAnswer = answersSet.slice(0, 3)
             finalAnswer.push(correctAnswer)
 
+
             dispatch({
                     type: AppActionType.NEW_ROUND,
                     payload: {
                         points,
                         currentHuman,
                         question,
-                        answers: _.shuffle(finalAnswer)
+                        answers: _.shuffle(finalAnswer),
+                        isFetchingData: false
                     }
                 }
             )

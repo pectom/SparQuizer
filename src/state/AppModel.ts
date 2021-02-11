@@ -31,4 +31,5 @@ export interface AppModel{
     question: Question,
     answers: Answer[],
     currentHuman?: Human,
+    isFetchingData: boolean
 }
