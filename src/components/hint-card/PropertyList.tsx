@@ -39,7 +39,7 @@ function ListItemLink(props: ListItemLinkProps) {
                     {
                         sparqlProperty.values.map(property => {
                             return (
-                                <SparQLTypography code={property.code}>
+                                <SparQLTypography code={property.code} sparQLProperty>
                                     {property.label}
                                 </SparQLTypography>
                             )

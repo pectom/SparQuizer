@@ -50,6 +50,7 @@ const useStyles = makeStyles((theme: Theme) =>
             flexDirection: "row",
             justifyContent: "center",
             alignContent: "center",
+            alignItems: "center",
             minHeight: "500px"
         },
         hintText: {

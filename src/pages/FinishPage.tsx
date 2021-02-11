@@ -7,6 +7,8 @@ import {Logo} from "../components/common/Logo";
 import {LogoGrid} from "../components/common/LogoGrid";
 import {Card} from "../components/common/Card";
 import {NewGameButton} from "../components/common/NewGameButtons";
+import {useSelector} from "react-redux";
+import {AppModel} from "../state/AppModel";
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
@@ -39,6 +41,7 @@ const useStyles = makeStyles((theme: Theme) =>
 
 export default function FinishPage() {
     const classes = useStyles();
+    const {points} = useSelector((state: AppModel) => state)
 
     return (
         <Grid container alignItems="center" justify="center" className={classes.root}>
@@ -49,7 +52,7 @@ export default function FinishPage() {
                 </Typography>
                 <EmojiEventsRounded className={classes.congrats}/>
                 <Typography>
-                    Your score: 10 points
+                    Your score: {points} points
                 </Typography>
                 <Box className={classes.playAgain} >
                     <Typography>
