@@ -6,11 +6,12 @@ import {createStyles, makeStyles, Theme} from "@material-ui/core/styles";
 import {AppModel} from "../state/AppModel";
 import RoundModal from "../components/modal/RoundModal";
 import {ModalContextProvider} from "../components/modal/ModalContexProvider";
-import {useSelector} from "react-redux";
+import {useDispatch, useSelector} from "react-redux";
 import {useConfigContext} from "../state/ConfigContext";
 import {useHistory} from "react-router-dom";
 import HintCard from "../components/hint-card/HintCard";
 import {CircularProgress} from "@material-ui/core";
+import {GameActionCreator} from "../state/GameActionCreator";
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
@@ -35,6 +36,12 @@ export default function GamePage() {
     const {questionCounter, isFetchingData} = useSelector((state: AppModel) => state)
     const {questionNumber} = useConfigContext()
     const history = useHistory()
+    const dispatch = useDispatch()
+
+    useEffect(() => {
+        dispatch(GameActionCreator.newGame())
+    }, [dispatch])
+
 
     useEffect(() => {
         if (questionCounter > questionNumber) {
