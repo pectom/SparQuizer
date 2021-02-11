@@ -1,16 +1,16 @@
 import {ActionModel, AppActionType} from "./AppReducer";
 import {ThunkDispatch} from "redux-thunk";
 import {
-    BaseHumanProps,
     getAndFilterHumanPropsById,
-    getFunctionProp,
+    selectQuestionProp,
     getHumanById,
     getHumans,
     getPropertyAnswers,
     getPropertyInfo
-} from "../query/humans";
+} from "../wikidata/WikidataApi";
 import {AppModel, Code} from "./AppModel";
 import _ from "lodash";
+import {BaseHumanProps} from "../wikidata/PropConfig";
 
 export type ThunkFunction<T> = (
     dispatch: ThunkDispatch<AppModel, void, ActionModel<T>>,
@@ -63,7 +63,7 @@ export class GameActionCreator {
             const human = _.sample(humans) || ""
             const allProps = _.shuffle(await getAndFilterHumanPropsById(human))
 
-            const questionProp = getFunctionProp(allProps)
+            const questionProp = selectQuestionProp(allProps)
             const selectedProps = removeInvalidProps(allProps, BaseHumanProps, questionProp).slice(0, 10)
 
             const props = new Set([

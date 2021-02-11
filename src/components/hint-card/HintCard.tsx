@@ -9,13 +9,13 @@ import Image from 'material-ui-image';
 import {Button, Grid} from "@material-ui/core";
 import PropertyList from "./PropertyList";
 import {Card} from "../common/Card";
-import {BaseHumanProps} from "../../query/humans";
 import {SparQLTypography} from "../common/SparQLTypography";
 import {AppModel, PropertyItem} from "../../state/AppModel";
 import {useDispatch, useSelector} from "react-redux";
 import {useConfigContext} from "../../state/ConfigContext";
 import {GameActionCreator} from "../../state/GameActionCreator";
 import {useModalContext} from "../modal/ModalContexProvider";
+import {BaseHumanProps} from "../../wikidata/PropConfig";
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({

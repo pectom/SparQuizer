@@ -1,11 +1,11 @@
 import axios from "axios";
 
-export class Wikidata {
+export class Axios {
   static axios = axios.create({
       baseURL: "https://query.wikidata.org/bigdata/namespace/wdq",
   });
 
-  public static async sendQuery(query: string) {
+  public static async sendWikidataQuery(query: string) {
     return this.axios
       .get("/sparql", {
         params: {
