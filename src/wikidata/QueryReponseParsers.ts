@@ -1,5 +1,5 @@
 import {Code, Human, QueryItem} from "../state/AppModel";
-import {getCodeFromURL} from "./WikidataApi";
+import {Utils} from "./Utils";
 
 export interface QueryResult {
     [key: string]: {
@@ -33,7 +33,7 @@ export function parseHumanInfoResponse(id: string, data: QueryResult, props: Cod
             let queryItem;
             if (link !== valueLabel) {
                 queryItem = {
-                    code: getCodeFromURL(link),
+                    code: Utils.getCodeFromURL(link),
                     label: valueLabel
                 }
             } else {
