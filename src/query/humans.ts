@@ -1,13 +1,67 @@
 import {Wikidata} from "../api/wikidata";
 import {Code, Human, QueryItem, Question} from "../state/AppModel";
 
-export const humansQuery = `
-    SELECT ?item WHERE {
-      ?item wdt:P106 wd:Q937857.
-      ?item wdt:P18 ?img.
-      ?item rdfs:label "Cristiano Ronaldo"@en
+export const BaseHumanProps = [
+    "P18", //"img",
+    "P27", //"country",
+    "P569",  //"dateOfBirth",
+    "P19", // placeOfBirth
+    "P106",  //"occupation",
+]
+
+const HumansProfessions: Code[] = [
+    "Q33999", //  actor
+    "Q36180", //  writer
+    "Q177220", //  singer
+    "Q901", //  scientist
+    "Q937857", //  football player
+    "Q3665646", //  basketball plater
+]
+
+export const humansQuery = (humansProfessions: Code[] = HumansProfessions, baseHumanProps: Code[] = BaseHumanProps) => {
+    const professions = humansProfessions.reduce((previousValue, currentValue) => {
+        return `${previousValue} wd:${currentValue}`
+    }, "")
+
+    const props = baseHumanProps.reduce((previousValue, currentValue) => {
+        return `${previousValue} ?item wdt:${currentValue} ?${currentValue}.`
+    }, "")
+
+    return `
+    SELECT DISTINCT ?item WHERE {
+      VALUES ?occupation {${professions}}.
+      ${props}
+    }Limit 10
+    `
+}
+
+const answersQuery = (propCode: Code) => `
+    SELECT ?prop (COUNT(?prop) as ?count) WHERE {
+        ?item wdt:${propCode} ?prop.
+    }
+    GROUP BY ?prop
+    ORDER BY DESC(?count) 
+    LIMIT 10
+`
+
+const labelQuery = (propCode: Code, valueCodes: Code[]) => {
+    const header = valueCodes.reduce((previousValue, currentValue) => {
+        return `${previousValue} ?${currentValue}`
+    }, "")
+    const labels = valueCodes.reduce((previousValue, currentValue) => {
+        return`${previousValue} wd:${currentValue} rdfs:label ?${currentValue}.`
+    }, "")
+
+    return `   
+    SELECT ${header} WHERE {
+      SERVICE wikibase:label {
+        bd:serviceParam wikibase:language "en".
+        ${labels}
+      }
     }
     `
+}
+
 
 const allHumanProps = (id: string) => `
     SELECT ?property WHERE {
@@ -16,27 +70,41 @@ const allHumanProps = (id: string) => `
     }Limit 500
 `
 
-export const BaseHumanProps = [
-    "P18", //"img",
-    "P27", //"country",
-    "P569",  //"dateOfBirth",
-    "P106",  //"occupation",
-]
-
 export const ExtendedHumanProps = [
-    "P1971",  //"numberOfChildren",
+    // all
     "P742", //"pseudonym",
-    "P166", //"awards",
     "P1399",  //"convicted",
+    "P166", //"awards",
+    "P509", // cause of death
+    "P69",// educated at
+    "P119", // place of burial
+
+    // singer
+    "P136", // music genre
+    "P1303", // instrument
+    "P412", // voice type
+
+    //scientist
+    "P1344", // participant in
+    "P1441", // present in work
+    "P1343", // described at
+    "P1066", // student of
+    "P184", // doctoral advisor
+    "P101", // field of work
+    "P463", // member of
+
+    // athlete
+    "P54", //club
+    "P118" //league
 ]
 
-export function getFunctionProp(allProps: Code[]) {
+export function getFunctionProp(allProps: Code[]): [Code, number] {
     for (var i = 0; i < allProps.length; i++) {
         if (ExtendedHumanProps.includes(allProps[i])) {
-            return allProps[i]
+            return [allProps[i], i]
         }
     }
-    return allProps[0]
+    return [allProps[0], 0]
 }
 
 const headerName = (name: string): string => {
@@ -143,12 +211,11 @@ export function parseResponse(id: string, data: QueryResult, props: Code[]): Hum
             values: humanValue
         }
     })
-    debugger
     return human
 }
 
 export async function getHumans(): Promise<Code[]>{
-    const humansQueryResults = await Wikidata.sendQuery(humansQuery)
+    const humansQueryResults = await Wikidata.sendQuery(humansQuery())
     return humansQueryResults.results.bindings.map((binding: { item: { value: string } }) => {
         return getCodeFromURL(binding.item.value)
     })
@@ -176,6 +243,24 @@ export async function getPropertyInfo(propertyId: string): Promise<Question> {
         description: description.value,
         label: label.value,
     }
+}
+
+export async function getPropertyAnswers(propertyId: string) {
+    const propertyInfoResult = await Wikidata.sendQuery(answersQuery(propertyId))
+    const labels = propertyInfoResult.results.bindings.map((binding: { prop: { value: string; }; }) => {
+        return getCodeFromURL(binding.prop.value)
+    })
+    const labelsQueryResult = await Wikidata.sendQuery(labelQuery(propertyId, labels))
+    const query = labelsQueryResult.results.bindings[0]
+
+    const answers: QueryItem[] = Object.keys(query).map(key =>{
+        return {
+            code: key,
+            label: query[key].value,
+            isValidAnswer: false
+        }
+    })
+    return answers
 }
 
 export function getCodeFromURL(url: string) {

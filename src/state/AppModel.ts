@@ -1,3 +1,5 @@
+import {Answer} from "../components/question-card/AnswersButtons";
+
 export interface QueryItem {
     code?: string,
     label: string,
@@ -27,5 +29,6 @@ export interface AppModel{
     points: Point,
     questionCounter: Counter,
     question: Question,
+    answers: Answer[],
     currentHuman?: Human,
 }

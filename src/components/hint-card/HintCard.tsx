@@ -83,7 +83,6 @@ export default function HintCard() {
                     }
                 }
             })
-            debugger
             setBaseHumanProps(base)
             setExtendHumanProps(extend)
         }

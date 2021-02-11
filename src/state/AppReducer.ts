@@ -18,7 +18,9 @@ export enum AppActionType {
 export type AppActionModel = ActionModel<AppModel>
 
 export const appReducer = (
-    state: AppModel = {humans: [], points: 0, questionCounter: 0, currentHuman: undefined, question: {code: "", label: "", description: ""}},
+    state: AppModel = {
+        answers: [],
+        humans: [], points: 0, questionCounter: 0, currentHuman: undefined, question: {code: "", label: "", description: ""}},
     action: AppActionModel
 ): AppModel => {
     const pointsDifference = action.payload ? action.payload.points : 0
@@ -34,12 +36,14 @@ export const appReducer = (
         case AppActionType.NEW_ROUND:
             const currentHuman = action.payload ? action.payload.currentHuman : undefined;
             const question = action.payload ? action.payload.question : {code: "", label: "", description: ""};
+            const answers = action.payload ? action.payload.answers : [];
             return {
                 ...state,
                 currentHuman,
                 points: state.points + pointsDifference,
                 questionCounter: state.questionCounter + 1,
-                question
+                question,
+                answers
             };
         case AppActionType.CHANGE_POINTS:
             return {

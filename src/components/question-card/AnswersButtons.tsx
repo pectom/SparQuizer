@@ -3,6 +3,8 @@ import React from "react";
 import {createStyles, makeStyles, Theme} from "@material-ui/core/styles";
 import {SparQLTypography} from "../common/SparQLTypography";
 import {useModalContext} from "../ModalContexProvider";
+import {useSelector} from "react-redux";
+import {AppModel} from "../../state/AppModel";
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
@@ -17,7 +19,7 @@ const useStyles = makeStyles((theme: Theme) =>
     }),
 );
 
-interface Answer {
+export interface Answer {
     label: string,
     code: string,
     isValidAnswer: boolean
@@ -26,6 +28,7 @@ interface Answer {
 export default function AnswersButtons() {
     const classes = useStyles();
     const {setOpen, setMode, setAnswer} = useModalContext()
+    const { answers } = useSelector((state: AppModel) => state)
 
     const onClick = (isValidAnswer: boolean) => {
         setOpen(true)
@@ -36,30 +39,6 @@ export default function AnswersButtons() {
         }
         setAnswer("good")
     }
-
-    const answers: Answer[] = [
-        {
-            label: "Tax",
-            code: "Q12312",
-            isValidAnswer: true
-        },
-        {
-            label: "Gawłt",
-            code: "Q12312",
-            isValidAnswer: false
-        },
-        {
-            label: "Kradzież",
-            code: "Q12312",
-            isValidAnswer: false
-        },
-        {
-            label: "Morderstwo",
-            code: "Q12312",
-            isValidAnswer: false
-        },
-    ]
-
     return (
         <div className={classes.container}>
             {

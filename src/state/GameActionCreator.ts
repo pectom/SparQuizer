@@ -5,7 +5,7 @@ import {
     getAllHumanPropsById,
     getFunctionProp,
     getHumanById,
-    getHumans,
+    getHumans, getPropertyAnswers,
     getPropertyInfo
 } from "../query/humans";
 import {AppModel} from "./AppModel";
@@ -40,25 +40,39 @@ export class GameActionCreator {
             const human = _.sample(humans) || ""
             const allProps = _.shuffle(await getAllHumanPropsById(human))
 
-            const selectedProps = allProps.slice(1, 10)
+            const [questionProp, index] = getFunctionProp(allProps)
 
-            const questionProp = getFunctionProp(allProps)
+            allProps.splice(index)
+            const selectedProps = allProps.slice(1, 10)
 
             const props = new Set([
                 ...BaseHumanProps,
                 questionProp,
                 ...selectedProps,
             ])
+            const currentHuman = await getHumanById(human, Array.from(props))
+
+            const correctAnswer = {
+                ...currentHuman[questionProp].values[0],
+                isValidAnswer: true
+            }
             const question = await getPropertyInfo(questionProp)
+            const answers = await getPropertyAnswers(questionProp)
+            const answersSet = answers.filter(answer => {
+                return answer.label !==  correctAnswer.label
+            })
+
+            const finalAnswer = answersSet.slice(0, 3)
+            finalAnswer.push(correctAnswer)
 
             debugger
-            const currentHuman = await getHumanById(human, Array.from(props))
             dispatch({
                     type: AppActionType.NEW_ROUND,
                     payload: {
                         points,
                         currentHuman,
-                        question
+                        question,
+                        answers: _.shuffle(finalAnswer)
                     }
                 }
             )
