@@ -5,10 +5,11 @@ import {
     getAllHumanPropsById,
     getFunctionProp,
     getHumanById,
-    getHumans, getPropertyAnswers,
+    getHumans,
+    getPropertyAnswers,
     getPropertyInfo
 } from "../query/humans";
-import {AppModel} from "./AppModel";
+import {AppModel, Code} from "./AppModel";
 import _ from "lodash";
 
 export type ThunkFunction<T> = (
@@ -16,6 +17,17 @@ export type ThunkFunction<T> = (
     getState: () => AppModel
 ) => Promise<unknown> | unknown;
 
+
+
+function removeInvalidProps(allProps: Code[], removedProps: Code[], questionProp: Code): Code[] {
+    let filteredProps: Code[] = [];
+    allProps.forEach((prop, index) => {
+        if (!removedProps.includes(prop) && prop !== questionProp){
+            filteredProps.push(prop)
+        }
+    })
+    return _.shuffle(filteredProps)
+}
 
 export class GameActionCreator {
     static newGame(): ThunkFunction<Pick<AppModel, "humans">> {
@@ -40,10 +52,8 @@ export class GameActionCreator {
             const human = _.sample(humans) || ""
             const allProps = _.shuffle(await getAllHumanPropsById(human))
 
-            const [questionProp, index] = getFunctionProp(allProps)
-
-            allProps.splice(index)
-            const selectedProps = allProps.slice(1, 10)
+            const questionProp = getFunctionProp(allProps)
+            const selectedProps = removeInvalidProps(allProps, BaseHumanProps, questionProp).slice(0, 10)
 
             const props = new Set([
                 ...BaseHumanProps,
@@ -56,6 +66,7 @@ export class GameActionCreator {
                 ...currentHuman[questionProp].values[0],
                 isValidAnswer: true
             }
+
             const question = await getPropertyInfo(questionProp)
             const answers = await getPropertyAnswers(questionProp)
             const answersSet = answers.filter(answer => {
@@ -65,7 +76,6 @@ export class GameActionCreator {
             const finalAnswer = answersSet.slice(0, 3)
             finalAnswer.push(correctAnswer)
 
-            debugger
             dispatch({
                     type: AppActionType.NEW_ROUND,
                     payload: {

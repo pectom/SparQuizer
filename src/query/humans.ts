@@ -98,13 +98,13 @@ export const ExtendedHumanProps = [
     "P118" //league
 ]
 
-export function getFunctionProp(allProps: Code[]): [Code, number] {
-    for (var i = 0; i < allProps.length; i++) {
+export function getFunctionProp(allProps: Code[]): Code {
+    for (let i = 0; i < allProps.length; i++) {
         if (ExtendedHumanProps.includes(allProps[i])) {
-            return [allProps[i], i]
+            return allProps[i]
         }
     }
-    return [allProps[0], 0]
+    return allProps[0]
 }
 
 const headerName = (name: string): string => {
